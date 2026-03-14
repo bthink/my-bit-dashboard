@@ -93,23 +93,23 @@ export const Modal = ({isOpen, onClose, title, children}: ModalProps) => {
       aria-labelledby="modal-title"
     >
       <div
-        className={`absolute inset-0 bg-slate-900/30 backdrop-blur-sm ${overlayClass}`}
+        className={`absolute inset-0 bg-[var(--color-backdrop)] backdrop-blur-sm ${overlayClass}`}
         onClick={() => !inLeavePhase && onClose()}
         aria-hidden="true"
       />
       <div
         ref={contentRef}
-        className={`relative w-full max-w-md rounded-xl border border-slate-200 bg-white shadow-xl ${contentClass}`}
+        className={`relative w-full max-w-md rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl ${contentClass}`}
       >
-        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-          <h2 id="modal-title" className="text-lg font-semibold text-slate-900">
+        <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
+          <h2 id="modal-title" className="text-lg font-semibold text-[var(--color-text)]">
             {displayTitle}
           </h2>
           <Button
             type="button"
             size="icon"
             onClick={() => !inLeavePhase && onClose()}
-            className="text-slate-500 hover:text-slate-800"
+            className="text-[var(--color-text-soft)] hover:text-[var(--color-text)]"
             aria-label="Close"
           >
             &times;

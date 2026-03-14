@@ -11,7 +11,7 @@ const DevPanelPage = () => {
 
   if (import.meta.env.PROD) {
     return (
-      <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+      <div className="rounded-lg border border-[var(--color-primary-ring)] bg-[var(--color-surface-soft)] p-4 text-sm text-[var(--color-text)]">
         Dev Panel is only meant to be used in development builds. The route is
         still present in production, but controls will remain disabled.
       </div>
@@ -41,22 +41,22 @@ const DevPanelPage = () => {
   return (
     <div className="space-y-4">
       <header className="space-y-1">
-        <h1 className="text-xl font-semibold tracking-tight text-slate-900">
+        <h1 className="text-xl font-semibold tracking-tight text-[var(--color-text)]">
           Dev panel
         </h1>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-[var(--color-text-muted)]">
           Local tools for generating and clearing orders during development. In
           the future, this can be shown based on the environment variable.
         </p>
       </header>
 
       {error && (
-        <div className="flex items-center justify-between gap-4 rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+        <div className="flex items-center justify-between gap-4 rounded-lg border border-[var(--color-danger-ring)] bg-[var(--color-danger-soft)] px-4 py-3 text-sm text-[var(--color-danger-hover)]">
           <span>{error}</span>
           <Button
             variant="danger"
             onClick={clearError}
-            className="text-rose-700 hover:bg-rose-200 hover:text-rose-900"
+            className="text-[var(--color-danger)] hover:bg-[var(--color-danger-soft)] hover:text-[var(--color-danger-hover)]"
           >
             Dismiss
           </Button>
@@ -79,13 +79,13 @@ const DevPanelPage = () => {
             size="md"
             onClick={handleClearClick}
             disabled={isSaving}
-            className="border border-rose-300 bg-rose-50 text-rose-800 hover:bg-rose-100"
+            className="border border-[var(--color-danger-ring)] bg-[var(--color-danger-soft)] text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-soft)]"
           >
             Clear DB
           </Button>
         ) : (
           <span className="flex items-center gap-2">
-            <span className="text-sm text-slate-600">
+            <span className="text-sm text-[var(--color-text-muted)]">
               Remove all orders from store and localStorage?
             </span>
             <Button
@@ -101,7 +101,7 @@ const DevPanelPage = () => {
               size="md"
               onClick={handleClearCancel}
               disabled={isSaving}
-              className="border border-slate-300 text-slate-700 hover:bg-slate-200"
+              className="border border-[var(--color-border)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-muted)]"
             >
               Cancel
             </Button>

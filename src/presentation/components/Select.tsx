@@ -16,10 +16,10 @@ type SelectProps = {
 };
 
 const defaultSelectClassName =
-  "rounded-lg border border-slate-300 bg-white pl-3 pr-8 py-2 text-sm text-slate-900 transition-colors focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500";
+  "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] py-2 pl-3 pr-8 text-sm text-[var(--color-text)] transition-colors focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]";
 
 const errorSelectSuffix =
-  "border-rose-500 focus:border-rose-500 focus:ring-rose-500";
+  "border-[var(--color-danger)] focus:border-[var(--color-danger)] focus:ring-[var(--color-danger)]";
 
 const normalizeOption = (opt: SelectOption | string): SelectOption =>
   typeof opt === "string" ? {value: opt, label: opt} : opt;
@@ -33,7 +33,7 @@ export const Select = ({
   placeholder,
   className = defaultSelectClassName,
   wrapperClassName = "flex flex-wrap items-center gap-4",
-  labelClassName = "text-sm text-slate-600",
+  labelClassName = "text-sm text-[var(--color-text-muted)]",
   error = null,
 }: SelectProps) => {
   const generatedId = React.useId();
@@ -70,7 +70,7 @@ export const Select = ({
         ))}
       </select>
       {hasError && error != null && (
-        <p id={errorId} className="mt-1 text-sm text-rose-600" role="alert">
+        <p id={errorId} className="mt-1 text-sm text-[var(--color-danger)]" role="alert">
           {error}
         </p>
       )}

@@ -20,12 +20,12 @@ import {
 } from "../domain/orders/metrics";
 
 const CHART_COLORS = [
-  "rgb(16 185 129)",
-  "rgb(52 211 153)",
-  "rgb(110 231 183)",
-  "rgb(167 243 208)",
-  "rgb(45 212 191)",
-  "rgb(94 234 212)",
+  "var(--color-chart-1)",
+  "var(--color-chart-2)",
+  "var(--color-chart-3)",
+  "var(--color-chart-4)",
+  "var(--color-chart-5)",
+  "var(--color-chart-6)",
 ];
 
 const Dashboard = () => {
@@ -61,24 +61,24 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       <header className="space-y-1">
-        <h1 className="text-xl font-semibold tracking-tight text-slate-900">
+        <h1 className="text-xl font-semibold tracking-tight text-[var(--color-text)]">
           Orders dashboard
         </h1>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-[var(--color-text-muted)]">
           High-level metrics and trends for the Acme Logistics order pipeline.
         </p>
       </header>
 
       {error && (
         <div
-          className="flex items-center justify-between gap-4 rounded-lg border border-rose-300 bg-rose-50 p-4 text-sm text-rose-800"
+          className="flex items-center justify-between gap-4 rounded-lg border border-[var(--color-danger-ring)] bg-[var(--color-danger-soft)] p-4 text-sm text-[var(--color-danger-hover)]"
           role="alert"
         >
           <span>{error}</span>
           <Button
             variant="danger"
             onClick={clearError}
-            className="text-rose-700 hover:bg-rose-200 hover:text-rose-900"
+            className="text-[var(--color-danger)] hover:bg-[var(--color-danger-soft)] hover:text-[var(--color-danger-hover)]"
           >
             Dismiss
           </Button>
@@ -90,7 +90,7 @@ const Dashboard = () => {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-24 animate-pulse rounded-lg bg-slate-200"
+              className="h-24 animate-pulse rounded-lg bg-[var(--color-surface-muted)]"
               aria-hidden
             />
           ))}
@@ -121,7 +121,7 @@ const Dashboard = () => {
           </div>
 
           {filteredOrders.length === 0 ? (
-            <p className="rounded-lg border border-slate-200 bg-slate-100 p-4 text-sm text-slate-600">
+            <p className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-soft)] p-4 text-sm text-[var(--color-text-muted)]">
               {selectedCountry === "all"
                 ? "No orders yet. Add orders from the Order Overview page or use the Dev Panel to generate sample data."
                 : `No orders for ${selectedCountry}. Change the filter or add orders.`}
@@ -129,8 +129,8 @@ const Dashboard = () => {
           ) : (
             <div className="space-y-6">
               {chartDataByCountry.length > 0 && (
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-                  <h2 className="mb-4 text-sm font-medium text-slate-600">
+                <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-chart-surface)] p-4">
+                  <h2 className="mb-4 text-sm font-medium text-[var(--color-text-muted)]">
                     Orders by country
                   </h2>
                   <ChartContainer>
@@ -143,25 +143,25 @@ const Dashboard = () => {
                       >
                         <CartesianGrid
                           strokeDasharray="3 3"
-                          stroke="rgb(226 232 240)"
+                          stroke="var(--color-chart-grid)"
                         />
                         <XAxis
                           dataKey="country"
-                          tick={{fill: "rgb(71 85 105)", fontSize: 12}}
-                          stroke="rgb(203 213 225)"
+                          tick={{fill: "var(--color-chart-label)", fontSize: 12}}
+                          stroke="var(--color-chart-axis)"
                         />
                         <YAxis
-                          tick={{fill: "rgb(71 85 105)", fontSize: 12}}
-                          stroke="rgb(203 213 225)"
+                          tick={{fill: "var(--color-chart-label)", fontSize: 12}}
+                          stroke="var(--color-chart-axis)"
                         />
                         <Tooltip
                           contentStyle={{
-                            backgroundColor: "rgb(255 255 255)",
-                            border: "1px solid rgb(226 232 240)",
+                            backgroundColor: "var(--color-chart-tooltip-bg)",
+                            border: "1px solid var(--color-chart-tooltip-border)",
                             borderRadius: "8px",
-                            color: "rgb(15 23 42)",
+                            color: "var(--color-chart-tooltip-text)",
                           }}
-                          labelStyle={{color: "rgb(51 65 85)"}}
+                          labelStyle={{color: "var(--color-chart-tooltip-text)"}}
                         />
                         <Bar
                           dataKey="count"
@@ -182,8 +182,8 @@ const Dashboard = () => {
               )}
 
               {chartDataByDate.length > 0 && (
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-                  <h2 className="mb-4 text-sm font-medium text-slate-600">
+                <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-chart-surface)] p-4">
+                  <h2 className="mb-4 text-sm font-medium text-[var(--color-text-muted)]">
                     Orders by shipping date
                   </h2>
                   <ChartContainer>
@@ -196,30 +196,30 @@ const Dashboard = () => {
                       >
                         <CartesianGrid
                           strokeDasharray="3 3"
-                          stroke="rgb(226 232 240)"
+                          stroke="var(--color-chart-grid)"
                         />
                         <XAxis
                           dataKey="date"
-                          tick={{fill: "rgb(71 85 105)", fontSize: 12}}
-                          stroke="rgb(203 213 225)"
+                          tick={{fill: "var(--color-chart-label)", fontSize: 12}}
+                          stroke="var(--color-chart-axis)"
                         />
                         <YAxis
-                          tick={{fill: "rgb(71 85 105)", fontSize: 12}}
-                          stroke="rgb(203 213 225)"
+                          tick={{fill: "var(--color-chart-label)", fontSize: 12}}
+                          stroke="var(--color-chart-axis)"
                         />
                         <Tooltip
                           contentStyle={{
-                            backgroundColor: "rgb(255 255 255)",
-                            border: "1px solid rgb(226 232 240)",
+                            backgroundColor: "var(--color-chart-tooltip-bg)",
+                            border: "1px solid var(--color-chart-tooltip-border)",
                             borderRadius: "8px",
-                            color: "rgb(15 23 42)",
+                            color: "var(--color-chart-tooltip-text)",
                           }}
-                          labelStyle={{color: "rgb(51 65 85)"}}
+                          labelStyle={{color: "var(--color-chart-tooltip-text)"}}
                         />
                         <Bar
                           dataKey="count"
                           name="Orders"
-                          fill="rgb(16 185 129)"
+                          fill="var(--color-chart-1)"
                           radius={[4, 4, 0, 0]}
                         />
                       </BarChart>

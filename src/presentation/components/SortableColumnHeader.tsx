@@ -20,7 +20,7 @@ export function SortableColumnHeader<T extends string>({
     <button
       type="button"
       onClick={() => onSort(sortKey)}
-      className="flex items-center gap-1 rounded p-0 text-left hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
+      className="flex items-center gap-1 rounded p-0 text-left hover:bg-[var(--color-surface-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-ring)] focus:ring-offset-1"
       aria-sort={
         isActive ? (sort.dir === "asc" ? "ascending" : "descending") : undefined
       }

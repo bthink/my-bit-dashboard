@@ -31,8 +31,8 @@ type DetailRowProps = {
 
 const DetailRow = ({label, children, mono}: DetailRowProps) => (
   <div>
-    <dt className="font-medium text-slate-500">{label}</dt>
-    <dd className={`ml-2 mt-0.5 text-slate-800${mono ? " font-mono" : ""}`}>
+    <dt className="font-medium text-[var(--color-text-soft)]">{label}</dt>
+    <dd className={`ml-2 mt-0.5 text-[var(--color-text)]${mono ? " font-mono" : ""}`}>
       {children}
     </dd>
   </div>
@@ -109,7 +109,7 @@ export const OrderDetailsModal = ({
                 <Button
                   size="md"
                   onClick={onClose}
-                  className="border border-slate-300 bg-transparent text-slate-700 hover:bg-slate-100"
+                  className="border border-[var(--color-border)] bg-transparent text-[var(--color-text-muted)] hover:bg-[var(--color-surface-soft)]"
                 >
                   Close
                 </Button>

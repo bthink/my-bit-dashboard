@@ -1,7 +1,95 @@
 @import "tailwindcss";
 
-:root {
+:root,
+:root[data-theme="dawn"] {
   --modal-close-duration: 200ms;
+  --brand-coral: #f25764;
+  --brand-magenta: #d9487d;
+  --brand-blue: #03588c;
+  --brand-navy: #023859;
+  --brand-mint: #a0f2db;
+
+  --color-app-bg: #03243b;
+  --color-app-glow-primary: #03588c99;
+  --color-app-glow-secondary: #d9487d66;
+  --color-surface: #0a3d5f;
+  --color-surface-soft: #0f4a72;
+  --color-surface-muted: #15608d;
+  --color-chart-surface: #2d79a5;
+  --color-border: #a0f2db40;
+  --color-border-strong: #a0f2db73;
+  --color-text: #f1f9ff;
+  --color-text-muted: #b7d9ee;
+  --color-text-soft: #89b9d5;
+  --color-primary: var(--brand-blue);
+  --color-primary-hover: #046aa8;
+  --color-primary-soft: #03588c59;
+  --color-primary-ring: #a0f2db80;
+  --color-accent-soft: #a0f2db33;
+  --color-danger: var(--brand-coral);
+  --color-danger-hover: var(--brand-magenta);
+  --color-danger-soft: #f2576433;
+  --color-danger-ring: #f2576480;
+  --color-backdrop: #01131f99;
+
+  --color-chart-1: var(--brand-blue);
+  --color-chart-2: var(--brand-coral);
+  --color-chart-3: var(--brand-magenta);
+  --color-chart-4: var(--brand-mint);
+  --color-chart-5: #7ad7ff;
+  --color-chart-6: #b7edff;
+  --color-chart-grid: #d7f1ff52;
+  --color-chart-axis: #cbe9fa;
+  --color-chart-label: #ecf8ff;
+  --color-chart-tooltip-bg: #07283f;
+  --color-chart-tooltip-border: #a0f2db80;
+  --color-chart-tooltip-text: #f5fcff;
+}
+
+:root[data-theme="light-brand"] {
+  --color-app-bg: #edf6fb;
+  --color-app-glow-primary: #03588c33;
+  --color-app-glow-secondary: #d9487d24;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f3fbff;
+  --color-surface-muted: #e5f3fb;
+  --color-chart-surface: #ebf7ff;
+  --color-border: #03588c33;
+  --color-border-strong: #03588c59;
+  --color-text: var(--brand-navy);
+  --color-text-muted: var(--brand-blue);
+  --color-text-soft: #03588cb3;
+  --color-primary: var(--brand-blue);
+  --color-primary-hover: var(--brand-navy);
+  --color-primary-soft: #03588c1f;
+  --color-primary-ring: #03588c66;
+  --color-accent-soft: #a0f2db66;
+  --color-danger: var(--brand-coral);
+  --color-danger-hover: var(--brand-magenta);
+  --color-danger-soft: #f2576424;
+  --color-danger-ring: #f2576466;
+  --color-backdrop: #02385959;
+  --color-chart-grid: #03588c33;
+  --color-chart-axis: #03588c99;
+  --color-chart-label: var(--brand-navy);
+  --color-chart-tooltip-bg: #ffffff;
+  --color-chart-tooltip-border: #03588c40;
+  --color-chart-tooltip-text: var(--brand-navy);
+}
+
+.app-shell-background {
+  background-color: var(--color-app-bg);
+  background-image:
+    radial-gradient(
+      48rem 24rem at 88% 0%,
+      var(--color-app-glow-primary),
+      transparent 65%
+    ),
+    radial-gradient(
+      32rem 20rem at 8% 100%,
+      var(--color-app-glow-secondary),
+      transparent 68%
+    );
 }
 
 .modal-overlay-enter {

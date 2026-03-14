@@ -10,13 +10,13 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "text-white bg-emerald-600 hover:bg-emerald-500 disabled:hover:bg-emerald-600",
+    "bg-[linear-gradient(135deg,var(--brand-blue),var(--brand-magenta))] text-white shadow-sm shadow-[var(--color-primary-soft)] hover:bg-[linear-gradient(135deg,var(--brand-navy),var(--brand-magenta))] disabled:hover:bg-[linear-gradient(135deg,var(--brand-blue),var(--brand-magenta))]",
   primaryOutline:
-    "text-emerald-600 hover:bg-emerald-100 hover:text-emerald-800 disabled:hover:bg-transparent disabled:hover:text-emerald-600",
+    "border border-[var(--color-border-strong)] text-[var(--color-text)] hover:bg-[var(--color-primary-soft)] hover:text-[var(--color-text)] disabled:hover:bg-transparent disabled:hover:text-[var(--color-text)]",
   danger:
-    "text-rose-600 hover:bg-rose-100 hover:text-rose-800 disabled:hover:bg-transparent disabled:hover:text-rose-600",
+    "text-[var(--color-danger)] hover:bg-[var(--color-danger-soft)] hover:text-[var(--color-danger-hover)] disabled:hover:bg-transparent disabled:hover:text-[var(--color-danger)]",
   dangerSolid:
-    "text-white bg-rose-600 hover:bg-rose-500 disabled:hover:bg-rose-600",
+    "bg-[linear-gradient(135deg,var(--brand-coral),var(--brand-magenta))] text-white shadow-sm shadow-[var(--color-danger-soft)] hover:bg-[linear-gradient(135deg,var(--brand-magenta),var(--brand-coral))] disabled:hover:bg-[linear-gradient(135deg,var(--brand-coral),var(--brand-magenta))]",
 };
 
 const sizeClasses = {
@@ -38,7 +38,7 @@ export const Button = ({
     "shrink-0 transition-colors active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed";
   const variantClass = variant
     ? variantClasses[variant]
-    : "text-slate-600 hover:bg-slate-100 hover:text-slate-800 disabled:hover:bg-transparent disabled:hover:text-slate-600";
+    : "text-[var(--color-text-muted)] hover:bg-[var(--color-surface-soft)] hover:text-[var(--color-text)] disabled:hover:bg-transparent disabled:hover:text-[var(--color-text-muted)]";
   const sizeClass = sizeClasses[size];
 
   return (

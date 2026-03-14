@@ -12,11 +12,11 @@ type NumberInputProps = {
 };
 
 const baseClassName =
-  "w-full rounded-lg border bg-white px-3 py-2 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none focus:ring-1";
+  "w-full rounded-lg border bg-[var(--color-surface)] px-3 py-2 text-[var(--color-text)] placeholder-[var(--color-text-soft)] transition-colors focus:outline-none focus:ring-1";
 const errorClassName =
-  "border-rose-500 focus:border-rose-500 focus:ring-rose-500";
+  "border-[var(--color-danger)] focus:border-[var(--color-danger)] focus:ring-[var(--color-danger)]";
 const defaultClassName =
-  "border-slate-300 focus:border-emerald-500 focus:ring-emerald-500";
+  "border-[var(--color-border)] focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]";
 
 export const NumberInput = ({
   id,
@@ -28,7 +28,7 @@ export const NumberInput = ({
   step = "any",
   placeholder,
   wrapperClassName = "",
-  labelClassName = "mb-1 block text-sm font-medium text-slate-600",
+  labelClassName = "mb-1 block text-sm font-medium text-[var(--color-text-muted)]",
 }: NumberInputProps) => {
   const hasError = Boolean(error);
   const errorId = `${id}-error`;
@@ -51,7 +51,7 @@ export const NumberInput = ({
         aria-describedby={hasError ? errorId : undefined}
       />
       {hasError && (
-        <p id={errorId} className="mt-1 text-sm text-rose-600" role="alert">
+        <p id={errorId} className="mt-1 text-sm text-[var(--color-danger)]" role="alert">
           {error}
         </p>
       )}

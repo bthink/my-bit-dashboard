@@ -23,7 +23,7 @@ type SortDir = "asc" | "desc";
 const tableGridColumns =
   "grid-cols-[minmax(140px,1fr)_minmax(100px,1fr)_minmax(80px,1fr)_minmax(110px,1fr)_132px]";
 const tableHeaderCellClass =
-  "flex items-center gap-1 px-4 py-3 font-medium text-slate-600";
+  "flex items-center gap-1 px-4 py-3 font-medium text-[var(--color-text-muted)]";
 
 const formatPrice = (value: number): string => {
   return value.toLocaleString(undefined, {
@@ -237,7 +237,7 @@ const OrderOverview = () => {
     <div className="flex h-full flex-col gap-4">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
-          <h1 className="text-xl font-semibold tracking-tight text-slate-900">
+          <h1 className="text-xl font-semibold tracking-tight text-[var(--color-text)]">
             Order overview
           </h1>
         </div>
@@ -255,14 +255,14 @@ const OrderOverview = () => {
 
       {error && (
         <div
-          className="flex items-center justify-between gap-4 rounded-lg border border-rose-300 bg-rose-50 p-4 text-sm text-rose-800"
+          className="flex items-center justify-between gap-4 rounded-lg border border-[var(--color-danger-ring)] bg-[var(--color-danger-soft)] p-4 text-sm text-[var(--color-danger-hover)]"
           role="alert"
         >
           <span>{error}</span>
           <Button
             variant="danger"
             onClick={clearError}
-            className="text-rose-700 hover:bg-rose-200 hover:text-rose-900"
+            className="text-[var(--color-danger)] hover:bg-[var(--color-danger-soft)] hover:text-[var(--color-danger-hover)]"
           >
             Dismiss
           </Button>
@@ -274,7 +274,7 @@ const OrderOverview = () => {
           {[1, 2, 3, 4, 5].map((i) => (
             <div
               key={i}
-              className="h-12 animate-pulse rounded-lg bg-slate-200"
+              className="h-12 animate-pulse rounded-lg bg-[var(--color-surface-muted)]"
               aria-hidden
             />
           ))}
@@ -282,9 +282,9 @@ const OrderOverview = () => {
       )}
 
       {isInitialized && orders.length === 0 && (
-        <div className="content-fade-in rounded-lg border border-slate-200 bg-slate-100 p-8 text-center">
-          <p className="text-sm text-slate-600">No orders yet.</p>
-          <p className="mt-1 text-sm text-slate-500">
+        <div className="content-fade-in rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-soft)] p-8 text-center">
+          <p className="text-sm text-[var(--color-text-muted)]">No orders yet.</p>
+          <p className="mt-1 text-sm text-[var(--color-text-soft)]">
             Create your first order using the button above.
           </p>
         </div>
@@ -293,17 +293,17 @@ const OrderOverview = () => {
       {isInitialized && orders.length > 0 && (
         <div className="content-fade-in flex min-h-0 flex-1 flex-col gap-4">
           {isSaving && (
-            <p className="text-sm text-slate-600" aria-live="polite">
+            <p className="text-sm text-[var(--color-text-muted)]" aria-live="polite">
               Saving…
             </p>
           )}
           <div
-            className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-slate-200"
+            className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-[var(--color-border)]"
             role="table"
             aria-label="Orders"
           >
             <div
-              className={`grid ${tableGridColumns} shrink-0 border-b border-slate-200 bg-slate-50 text-left text-sm`}
+              className={`grid ${tableGridColumns} shrink-0 border-b border-[var(--color-border)] bg-[var(--color-surface-soft)] text-left text-sm`}
               role="row"
               style={{minWidth: 560}}
             >
@@ -344,7 +344,7 @@ const OrderOverview = () => {
                 </SortableColumnHeader>
               </div>
               <div
-                className="flex items-center px-4 py-3 font-medium text-slate-600"
+                className="flex items-center px-4 py-3 font-medium text-[var(--color-text-muted)]"
                 role="columnheader"
               >
                 Actions
@@ -373,29 +373,29 @@ const OrderOverview = () => {
                         width: "100%",
                         transform: `translateY(${virtualRow.start}px)`,
                       }}
-                      className={`grid ${tableGridColumns} border-b border-slate-200 text-left text-sm transition-colors hover:bg-slate-50`}
+                      className={`grid ${tableGridColumns} border-b border-[var(--color-border)] text-left text-sm transition-colors hover:bg-[var(--color-surface-soft)]`}
                       role="row"
                     >
                       <div
-                        className="flex items-center px-4 py-3 text-slate-800"
+                        className="flex items-center px-4 py-3 text-[var(--color-text)]"
                         role="cell"
                       >
                         {order.destinationCountry}
                       </div>
                       <div
-                        className="flex items-center px-4 py-3 text-slate-800"
+                        className="flex items-center px-4 py-3 text-[var(--color-text)]"
                         role="cell"
                       >
                         {order.shippingDate}
                       </div>
                       <div
-                        className="flex items-center px-4 py-3 text-slate-800"
+                        className="flex items-center px-4 py-3 text-[var(--color-text)]"
                         role="cell"
                       >
                         {formatPrice(order.price)}
                       </div>
                       <div
-                        className="flex items-center px-4 py-3 text-slate-800"
+                        className="flex items-center px-4 py-3 text-[var(--color-text)]"
                         role="cell"
                       >
                         {formatDate(order.createdAt)}

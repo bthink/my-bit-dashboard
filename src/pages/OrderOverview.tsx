@@ -350,7 +350,10 @@ const OrderOverview = () => {
                 Actions
               </div>
             </div>
-            <div ref={scrollParentRef} className="min-h-0 flex-1 overflow-auto">
+            <div
+              ref={scrollParentRef}
+              className="themed-scrollbar min-h-0 flex-1 overflow-auto"
+            >
               <div
                 style={{
                   height: `${rowVirtualizer.getTotalSize()}px`,

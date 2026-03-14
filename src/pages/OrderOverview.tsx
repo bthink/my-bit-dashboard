@@ -15,6 +15,8 @@ type FormMode = "create" | {edit: Order};
 
 type SortKey = "destinationCountry" | "shippingDate" | "price" | "createdAt";
 type SortDir = "asc" | "desc";
+const tableGridColumns =
+  "grid-cols-[minmax(140px,1fr)_minmax(100px,1fr)_minmax(80px,1fr)_minmax(110px,1fr)_132px]";
 
 const formatPrice = (value: number): string => {
   return value.toLocaleString(undefined, {
@@ -54,12 +56,12 @@ const OrderOverview = () => {
   const [fieldErrors, setFieldErrors] = useState<OrderFieldErrors | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [viewOrder, setViewOrder] = useState<Order | null>(null);
-  const [sort, setSort] = useState<{ key: SortKey; dir: SortDir } | null>(null);
+  const [sort, setSort] = useState<{key: SortKey; dir: SortDir} | null>(null);
   const scrollParentRef = useRef<HTMLDivElement>(null);
 
   const sortedOrders = useMemo(() => {
     if (!sort) return orders;
-    const { key: sortKey, dir: sortDir } = sort;
+    const {key: sortKey, dir: sortDir} = sort;
     return [...orders].sort((a, b) => {
       const aVal = a[sortKey];
       const bVal = b[sortKey];
@@ -74,9 +76,9 @@ const OrderOverview = () => {
   const handleSort = useCallback((key: SortKey) => {
     setSort((prev) => {
       if (prev?.key === key) {
-        return { key, dir: prev.dir === "asc" ? "desc" : "asc" };
+        return {key, dir: prev.dir === "asc" ? "desc" : "asc"};
       }
-      return { key, dir: "asc" };
+      return {key, dir: "asc"};
     });
   }, []);
 
@@ -252,109 +254,107 @@ const OrderOverview = () => {
             role="table"
             aria-label="Orders"
           >
-            <div
-              className="grid grid-cols-[minmax(140px,1fr)_minmax(100px,1fr)_minmax(80px,1fr)_minmax(110px,1fr)_auto] border-b border-slate-200 bg-slate-50 text-left text-sm"
-              role="row"
-            >
+            <div ref={scrollParentRef} className="min-h-0 flex-1 overflow-auto">
               <div
-                className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
-                role="columnheader"
+                className={`sticky top-0 z-10 grid ${tableGridColumns} border-b border-slate-200 bg-slate-50 text-left text-sm`}
+                role="row"
+                style={{minWidth: 560}}
               >
-                <button
-                  type="button"
-                  onClick={() => handleSort("destinationCountry")}
-                  className="flex items-center gap-1 rounded hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
-                  aria-sort={
-                    sort?.key === "destinationCountry"
-                      ? sort.dir === "asc"
-                        ? "ascending"
-                        : "descending"
-                      : undefined
-                  }
+                <div
+                  className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
+                  role="columnheader"
                 >
-                  Destination country
-                  {sort?.key === "destinationCountry" && (
-                    <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
-                  )}
-                </button>
-              </div>
-              <div
-                className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
-                role="columnheader"
-              >
-                <button
-                  type="button"
-                  onClick={() => handleSort("shippingDate")}
-                  className="flex items-center gap-1 rounded hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
-                  aria-sort={
-                    sort?.key === "shippingDate"
-                      ? sort.dir === "asc"
-                        ? "ascending"
-                        : "descending"
-                      : undefined
-                  }
+                  <button
+                    type="button"
+                    onClick={() => handleSort("destinationCountry")}
+                    className="flex items-center gap-1 rounded p-0 text-left hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
+                    aria-sort={
+                      sort?.key === "destinationCountry"
+                        ? sort.dir === "asc"
+                          ? "ascending"
+                          : "descending"
+                        : undefined
+                    }
+                  >
+                    Destination
+                    {sort?.key === "destinationCountry" && (
+                      <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
+                    )}
+                  </button>
+                </div>
+                <div
+                  className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
+                  role="columnheader"
                 >
-                  Shipping date
-                  {sort?.key === "shippingDate" && (
-                    <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
-                  )}
-                </button>
-              </div>
-              <div
-                className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
-                role="columnheader"
-              >
-                <button
-                  type="button"
-                  onClick={() => handleSort("price")}
-                  className="flex items-center gap-1 rounded hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
-                  aria-sort={
-                    sort?.key === "price"
-                      ? sort.dir === "asc"
-                        ? "ascending"
-                        : "descending"
-                      : undefined
-                  }
+                  <button
+                    type="button"
+                    onClick={() => handleSort("shippingDate")}
+                    className="flex items-center gap-1 rounded p-0 text-left hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
+                    aria-sort={
+                      sort?.key === "shippingDate"
+                        ? sort.dir === "asc"
+                          ? "ascending"
+                          : "descending"
+                        : undefined
+                    }
+                  >
+                    Shipping date
+                    {sort?.key === "shippingDate" && (
+                      <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
+                    )}
+                  </button>
+                </div>
+                <div
+                  className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
+                  role="columnheader"
                 >
-                  Price
-                  {sort?.key === "price" && (
-                    <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
-                  )}
-                </button>
-              </div>
-              <div
-                className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
-                role="columnheader"
-              >
-                <button
-                  type="button"
-                  onClick={() => handleSort("createdAt")}
-                  className="flex items-center gap-1 rounded hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
-                  aria-sort={
-                    sort?.key === "createdAt"
-                      ? sort.dir === "asc"
-                        ? "ascending"
-                        : "descending"
-                      : undefined
-                  }
+                  <button
+                    type="button"
+                    onClick={() => handleSort("price")}
+                    className="flex items-center gap-1 rounded p-0 text-left hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
+                    aria-sort={
+                      sort?.key === "price"
+                        ? sort.dir === "asc"
+                          ? "ascending"
+                          : "descending"
+                        : undefined
+                    }
+                  >
+                    Price
+                    {sort?.key === "price" && (
+                      <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
+                    )}
+                  </button>
+                </div>
+                <div
+                  className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
+                  role="columnheader"
                 >
-                  Created at
-                  {sort?.key === "createdAt" && (
-                    <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
-                  )}
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSort("createdAt")}
+                    className="flex items-center gap-1 rounded p-0 text-left hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
+                    aria-sort={
+                      sort?.key === "createdAt"
+                        ? sort.dir === "asc"
+                          ? "ascending"
+                          : "descending"
+                        : undefined
+                    }
+                  >
+                    Created at
+                    {sort?.key === "createdAt" && (
+                      <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
+                    )}
+                  </button>
+                </div>
+                <div
+                  className="flex items-center px-4 py-3 font-medium text-slate-600"
+                  role="columnheader"
+                >
+                  Actions
+                </div>
               </div>
-              <div
-                className="px-4 py-3 font-medium text-slate-600"
-                role="columnheader"
-              >
-                Actions
-              </div>
-            </div>
-            <div
-              ref={scrollParentRef}
-              className="min-h-0 flex-1 overflow-auto"
-            >
               <div
                 style={{
                   height: `${rowVirtualizer.getTotalSize()}px`,
@@ -377,37 +377,34 @@ const OrderOverview = () => {
                         width: "100%",
                         transform: `translateY(${virtualRow.start}px)`,
                       }}
-                      className="grid grid-cols-[minmax(140px,1fr)_minmax(100px,1fr)_minmax(80px,1fr)_minmax(110px,1fr)_auto] border-b border-slate-200 text-left text-sm transition-colors hover:bg-slate-50"
+                      className={`grid ${tableGridColumns} border-b border-slate-200 text-left text-sm transition-colors hover:bg-slate-50`}
                       role="row"
                     >
                       <div
-                        className="px-4 py-3 text-slate-800"
+                        className="flex items-center px-4 py-3 text-slate-800"
                         role="cell"
                       >
                         {order.destinationCountry}
                       </div>
                       <div
-                        className="px-4 py-3 text-slate-800"
+                        className="flex items-center px-4 py-3 text-slate-800"
                         role="cell"
                       >
                         {order.shippingDate}
                       </div>
                       <div
-                        className="px-4 py-3 text-slate-800"
+                        className="flex items-center px-4 py-3 text-slate-800"
                         role="cell"
                       >
                         {formatPrice(order.price)}
                       </div>
                       <div
-                        className="px-4 py-3 text-slate-800"
+                        className="flex items-center px-4 py-3 text-slate-800"
                         role="cell"
                       >
                         {formatDate(order.createdAt)}
                       </div>
-                      <div
-                        className="px-4 py-3"
-                        role="cell"
-                      >
+                      <div className="flex items-center px-4 py-3" role="cell">
                         {deletingId === order.id ? (
                           <span className="flex items-center gap-2 text-xs">
                             <span className="text-slate-500">Delete?</span>

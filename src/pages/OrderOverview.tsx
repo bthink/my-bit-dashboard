@@ -1,237 +1,40 @@
-import {useState, useCallback, useRef, useMemo} from "react";
-import {Eye, Pencil, Trash2} from "lucide-react";
-import {useVirtualizer} from "@tanstack/react-virtual";
-import {useOrdersStore} from "../presentation/hooks/useOrdersStore";
 import {Button} from "../presentation/components/Button";
 import {OrderDetailsModal} from "../presentation/components/OrderDetailsModal";
 import {OrderFormModal} from "../presentation/components/OrderFormModal";
 import {ConfirmDeleteModal} from "../presentation/components/ConfirmDeleteModal";
-import {SortableColumnHeader} from "../presentation/components/SortableColumnHeader";
-import {isOrderValidationError} from "../domain/orders/errors";
-import type {Order} from "../domain/orders/order";
-import type {CreateOrderInput} from "../domain/orders/order";
-import type {OrderFieldErrors} from "../domain/orders/errors";
-
-type OrderModalState = {
-  orderId: string;
-  mode: "view" | "edit";
-  editSource: "table" | "details";
-};
-
-type SortKey = "destinationCountry" | "shippingDate" | "price" | "createdAt";
-type SortDir = "asc" | "desc";
-const tableGridColumns =
-  "grid-cols-[minmax(140px,1fr)_minmax(100px,1fr)_minmax(80px,1fr)_minmax(110px,1fr)_132px]";
-const tableHeaderCellClass =
-  "flex items-center gap-1 px-4 py-3 font-medium text-[var(--color-text-muted)]";
-
-const formatPrice = (value: number): string => {
-  return value.toLocaleString(undefined, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-};
-
-const formatDate = (iso: string): string => {
-  try {
-    return new Date(iso).toLocaleString(undefined, {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return iso;
-  }
-};
+import {OrdersTable} from "./orderOverview/OrdersTable";
+import {useOrderOverviewController} from "./orderOverview/useOrderOverviewController";
 
 const OrderOverview = () => {
   const {
     orders,
+    sortedOrders,
+    sort,
     isInitialized,
     isLoading,
     isSaving,
     error,
     clearError,
-    createOrder,
-    updateOrder,
-    deleteOrder,
-  } = useOrdersStore();
-
-  const [createFormOpen, setCreateFormOpen] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<OrderFieldErrors | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [orderModalState, setOrderModalState] =
-    useState<OrderModalState | null>(null);
-  const [sort, setSort] = useState<{key: SortKey; dir: SortDir}>({
-    key: "shippingDate",
-    dir: "asc",
-  });
-  const scrollParentRef = useRef<HTMLDivElement>(null);
-
-  const sortedOrders = useMemo(() => {
-    const {key: sortKey, dir: sortDir} = sort;
-    return [...orders]
-      .map((order, index) => ({order, index}))
-      .sort((a, b) => {
-        const aVal = a.order[sortKey];
-        const bVal = b.order[sortKey];
-        const cmp =
-          typeof aVal === "number" && typeof bVal === "number"
-            ? aVal - bVal
-            : String(aVal).localeCompare(String(bVal));
-        if (cmp !== 0) return sortDir === "asc" ? cmp : -cmp;
-        return a.index - b.index;
-      })
-      .map(({order}) => order);
-  }, [orders, sort]);
-
-  const handleSort = useCallback((key: SortKey) => {
-    setSort((prev) => {
-      if (prev?.key === key) {
-        return {key, dir: prev.dir === "asc" ? "desc" : "asc"};
-      }
-      return {key, dir: "asc"};
-    });
-  }, []);
-
-  const rowVirtualizer = useVirtualizer({
-    count: sortedOrders.length,
-    getScrollElement: () => scrollParentRef.current,
-    estimateSize: () => 52,
-    overscan: 10,
-  });
-
-  const openCreate = useCallback(() => {
-    clearError();
-    setFieldErrors(null);
-    setCreateFormOpen(true);
-  }, [clearError]);
-
-  const openView = useCallback(
-    (order: Order) => {
-      clearError();
-      setFieldErrors(null);
-      setOrderModalState({
-        orderId: order.id,
-        mode: "view",
-        editSource: "details",
-      });
-    },
-    [clearError],
-  );
-
-  const openEdit = useCallback(
-    (order: Order) => {
-      clearError();
-      setFieldErrors(null);
-      setOrderModalState({
-        orderId: order.id,
-        mode: "edit",
-        editSource: "table",
-      });
-    },
-    [clearError],
-  );
-
-  const closeOrderModal = useCallback(() => {
-    setOrderModalState(null);
-    setFieldErrors(null);
-  }, []);
-
-  const switchOrderModalToEdit = useCallback(() => {
-    setOrderModalState((prev) =>
-      prev ? {...prev, mode: "edit", editSource: "details"} : prev,
-    );
-  }, []);
-
-  const switchOrderModalToView = useCallback(() => {
-    setFieldErrors(null);
-    setOrderModalState((prev) => {
-      if (!prev) return prev;
-      if (prev.editSource === "table") return null;
-      return {...prev, mode: "view"};
-    });
-  }, []);
-
-  const closeForm = useCallback(() => {
-    setCreateFormOpen(false);
-    setFieldErrors(null);
-  }, []);
-
-  const handleCreateSubmit = useCallback(
-    async (values: CreateOrderInput) => {
-      setFieldErrors(null);
-      try {
-        await createOrder(values);
-        closeForm();
-      } catch (e) {
-        if (isOrderValidationError(e)) {
-          setFieldErrors(e.fieldErrors);
-          clearError();
-          throw e;
-        }
-        setFieldErrors(null);
-        throw e;
-      }
-    },
-    [createOrder, closeForm, clearError],
-  );
-
-  const selectedOrder = useMemo(
-    () =>
-      orderModalState
-        ? (orders.find((order) => order.id === orderModalState.orderId) ?? null)
-        : null,
-    [orderModalState, orders],
-  );
-
-  const handleEditSubmit = useCallback(
-    async (values: CreateOrderInput) => {
-      if (!selectedOrder) return;
-      setFieldErrors(null);
-      try {
-        await updateOrder(selectedOrder.id, values);
-        closeOrderModal();
-      } catch (e) {
-        if (isOrderValidationError(e)) {
-          setFieldErrors(e.fieldErrors);
-          clearError();
-          throw e;
-        }
-        setFieldErrors(null);
-        throw e;
-      }
-    },
-    [selectedOrder, updateOrder, closeOrderModal, clearError],
-  );
-
-  const handleDeleteClick = useCallback((id: string) => {
-    setDeletingId(id);
-  }, []);
-
-  const handleDeleteConfirm = useCallback(
-    async (id: string) => {
-      try {
-        await deleteOrder(id);
-        setDeletingId(null);
-      } catch {
-        setDeletingId(null);
-      }
-    },
-    [deleteOrder],
-  );
-
-  const handleDeleteCancel = useCallback(() => {
-    setDeletingId(null);
-  }, []);
-
-  const orderToDelete = useMemo(
-    () =>
-      deletingId ? (orders.find((o) => o.id === deletingId) ?? null) : null,
-    [deletingId, orders],
-  );
+    createFormOpen,
+    fieldErrors,
+    deletingId,
+    orderModalState,
+    selectedOrder,
+    orderToDelete,
+    handleSort,
+    openCreate,
+    closeForm,
+    openView,
+    openEdit,
+    closeOrderModal,
+    switchOrderModalToEdit,
+    switchOrderModalToView,
+    handleCreateSubmit,
+    handleEditSubmit,
+    handleDeleteClick,
+    handleDeleteConfirm,
+    handleDeleteCancel,
+  } = useOrderOverviewController();
 
   return (
     <div className="flex h-full flex-col gap-4">
@@ -302,151 +105,15 @@ const OrderOverview = () => {
               Saving…
             </p>
           )}
-          <div
-            className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-[var(--color-border)]"
-            role="table"
-            aria-label="Orders"
-          >
-            <div
-              className={`grid ${tableGridColumns} shrink-0 border-b border-[var(--color-border)] bg-[var(--color-surface-soft)] text-left text-sm`}
-              role="row"
-              style={{minWidth: 560}}
-            >
-              <div className={tableHeaderCellClass} role="columnheader">
-                <SortableColumnHeader
-                  sortKey="destinationCountry"
-                  sort={sort}
-                  onSort={handleSort}
-                >
-                  Destination
-                </SortableColumnHeader>
-              </div>
-              <div className={tableHeaderCellClass} role="columnheader">
-                <SortableColumnHeader
-                  sortKey="shippingDate"
-                  sort={sort}
-                  onSort={handleSort}
-                >
-                  Shipping date
-                </SortableColumnHeader>
-              </div>
-              <div className={tableHeaderCellClass} role="columnheader">
-                <SortableColumnHeader
-                  sortKey="price"
-                  sort={sort}
-                  onSort={handleSort}
-                >
-                  Price
-                </SortableColumnHeader>
-              </div>
-              <div className={tableHeaderCellClass} role="columnheader">
-                <SortableColumnHeader
-                  sortKey="createdAt"
-                  sort={sort}
-                  onSort={handleSort}
-                >
-                  Created at
-                </SortableColumnHeader>
-              </div>
-              <div
-                className="flex items-center px-4 py-3 font-medium text-[var(--color-text-muted)]"
-                role="columnheader"
-              >
-                Actions
-              </div>
-            </div>
-            <div
-              ref={scrollParentRef}
-              className="themed-scrollbar min-h-0 flex-1 overflow-auto"
-            >
-              <div
-                style={{
-                  height: `${rowVirtualizer.getTotalSize()}px`,
-                  position: "relative",
-                  width: "100%",
-                  minWidth: 560,
-                }}
-              >
-                {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                  const order = sortedOrders[virtualRow.index];
-                  return (
-                    <div
-                      key={order.id}
-                      data-index={virtualRow.index}
-                      ref={rowVirtualizer.measureElement}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        transform: `translateY(${virtualRow.start}px)`,
-                      }}
-                      className={`grid ${tableGridColumns} border-b border-[var(--color-border)] text-left text-sm transition-colors hover:bg-[var(--color-surface-soft)]`}
-                      role="row"
-                    >
-                      <div
-                        className="flex items-center px-4 py-3 text-[var(--color-text)]"
-                        role="cell"
-                      >
-                        {order.destinationCountry}
-                      </div>
-                      <div
-                        className="flex items-center px-4 py-3 text-[var(--color-text)]"
-                        role="cell"
-                      >
-                        {order.shippingDate}
-                      </div>
-                      <div
-                        className="flex items-center px-4 py-3 text-[var(--color-text)]"
-                        role="cell"
-                      >
-                        {formatPrice(order.price)}
-                      </div>
-                      <div
-                        className="flex items-center px-4 py-3 text-[var(--color-text)]"
-                        role="cell"
-                      >
-                        {formatDate(order.createdAt)}
-                      </div>
-                      <div className="flex items-center px-4 py-3" role="cell">
-                        <span className="flex items-center gap-1">
-                          <Button
-                            size="icon"
-                            onClick={() => openView(order)}
-                            disabled={isSaving}
-                            title="View"
-                            aria-label={`View order ${order.id}`}
-                          >
-                            <Eye size={18} aria-hidden />
-                          </Button>
-                          <Button
-                            variant="primaryOutline"
-                            size="icon"
-                            onClick={() => openEdit(order)}
-                            disabled={isSaving}
-                            title="Edit"
-                            aria-label={`Edit order ${order.id}`}
-                          >
-                            <Pencil size={18} aria-hidden />
-                          </Button>
-                          <Button
-                            variant="danger"
-                            size="icon"
-                            onClick={() => handleDeleteClick(order.id)}
-                            disabled={isSaving}
-                            title="Delete"
-                            aria-label={`Delete order ${order.id}`}
-                          >
-                            <Trash2 size={18} aria-hidden />
-                          </Button>
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          <OrdersTable
+            orders={sortedOrders}
+            sort={sort}
+            isSaving={isSaving}
+            onSort={handleSort}
+            onView={openView}
+            onEdit={openEdit}
+            onDelete={handleDeleteClick}
+          />
         </div>
       )}
 

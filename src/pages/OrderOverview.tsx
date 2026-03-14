@@ -189,9 +189,6 @@ const OrderOverview = () => {
           <h1 className="text-xl font-semibold tracking-tight text-slate-900">
             Order overview
           </h1>
-          <p className="text-sm text-slate-600">
-            Inventory-style view for individual orders including CRUD actions.
-          </p>
         </div>
         {isInitialized && (
           <Button
@@ -254,12 +251,11 @@ const OrderOverview = () => {
             role="table"
             aria-label="Orders"
           >
-            <div ref={scrollParentRef} className="min-h-0 flex-1 overflow-auto">
-              <div
-                className={`sticky top-0 z-10 grid ${tableGridColumns} border-b border-slate-200 bg-slate-50 text-left text-sm`}
-                role="row"
-                style={{minWidth: 560}}
-              >
+            <div
+              className={`grid ${tableGridColumns} shrink-0 border-b border-slate-200 bg-slate-50 text-left text-sm`}
+              role="row"
+              style={{minWidth: 560}}
+            >
                 <div
                   className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
                   role="columnheader"
@@ -355,6 +351,7 @@ const OrderOverview = () => {
                   Actions
                 </div>
               </div>
+            <div ref={scrollParentRef} className="min-h-0 flex-1 overflow-auto">
               <div
                 style={{
                   height: `${rowVirtualizer.getTotalSize()}px`,

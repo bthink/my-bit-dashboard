@@ -70,7 +70,7 @@ const DevPanelPage = () => {
           onClick={handleGenerate}
           disabled={isSaving}
         >
-          {isSaving ? "Saving…" : `Generate ${FAKE_ORDER_COUNT} orders`}
+          {isSaving ? "Saving…" : `Add ${FAKE_ORDER_COUNT} orders`}
         </Button>
 
         {!clearConfirm ? (

@@ -1,6 +1,6 @@
 import React from "react";
 
-type SelectOption = { value: string; label: string };
+type SelectOption = {value: string; label: string};
 
 type SelectProps = {
   value: string;
@@ -16,13 +16,13 @@ type SelectProps = {
 };
 
 const defaultSelectClassName =
-  "rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500";
+  "rounded-lg border border-slate-300 bg-white pl-3 pr-8 py-2 text-sm text-slate-900 transition-colors focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500";
 
 const errorSelectSuffix =
   "border-rose-500 focus:border-rose-500 focus:ring-rose-500";
 
 const normalizeOption = (opt: SelectOption | string): SelectOption =>
-  typeof opt === "string" ? { value: opt, label: opt } : opt;
+  typeof opt === "string" ? {value: opt, label: opt} : opt;
 
 export const Select = ({
   value,

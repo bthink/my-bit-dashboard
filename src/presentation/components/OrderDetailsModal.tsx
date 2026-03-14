@@ -1,7 +1,10 @@
 import type {ReactNode} from "react";
 import {Button} from "./Button";
 import {Modal} from "./Modal";
+import {OrderForm} from "./OrderForm";
 import type {Order} from "../../domain/orders/order";
+import type {CreateOrderInput} from "../../domain/orders/order";
+import type {OrderFieldErrors} from "../../domain/orders/errors";
 
 const formatPrice = (value: number): string =>
   value.toLocaleString(undefined, {
@@ -38,52 +41,81 @@ const DetailRow = ({label, children, mono}: DetailRowProps) => (
 type OrderDetailsModalProps = {
   order: Order | null;
   isOpen: boolean;
+  mode: "view" | "edit";
   onClose: () => void;
-  onEdit: (order: Order) => void;
+  onStartEdit: () => void;
+  onCancelEdit: () => void;
+  onSubmit: (values: CreateOrderInput) => Promise<void>;
+  fieldErrors?: OrderFieldErrors | null;
+  isSubmitting: boolean;
 };
 
 export const OrderDetailsModal = ({
   order,
   isOpen,
+  mode,
   onClose,
-  onEdit,
+  onStartEdit,
+  onCancelEdit,
+  onSubmit,
+  fieldErrors,
+  isSubmitting,
 }: OrderDetailsModalProps) => {
-  const handleEdit = () => {
-    if (!order) return;
-    onClose();
-    onEdit(order);
-  };
-
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Order details">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={mode === "edit" ? "Edit order" : "Order details"}
+    >
       {order && (
         <div className="space-y-4">
-          <dl className="grid gap-3 text-sm">
-            <DetailRow label="ID" mono>
-              {order.id}
-            </DetailRow>
-            <DetailRow label="Destination country">
-              {order.destinationCountry}
-            </DetailRow>
-            <DetailRow label="Shipping date">
-              {formatDate(order.shippingDate)}
-            </DetailRow>
-            <DetailRow label="Price">{formatPrice(order.price)}</DetailRow>
-            <DetailRow label="Created">{formatDate(order.createdAt)}</DetailRow>
-            <DetailRow label="Updated">{formatDate(order.updatedAt)}</DetailRow>
-          </dl>
-          <div className="flex justify-end gap-2 pt-2">
-            <Button variant="primary" size="md" onClick={handleEdit}>
-              Edit
-            </Button>
-            <Button
-              size="md"
-              onClick={onClose}
-              className="border border-slate-300 bg-transparent text-slate-700 hover:bg-slate-100"
-            >
-              Close
-            </Button>
-          </div>
+          {mode === "edit" ? (
+            <OrderForm
+              key={`${order.id}-edit`}
+              initialValues={{
+                destinationCountry: order.destinationCountry,
+                shippingDate: order.shippingDate,
+                price: order.price,
+              }}
+              onSubmit={onSubmit}
+              onCancel={onCancelEdit}
+              fieldErrors={fieldErrors}
+              isSubmitting={isSubmitting}
+            />
+          ) : (
+            <>
+              <dl className="grid gap-3 text-sm">
+                <DetailRow label="ID" mono>
+                  {order.id}
+                </DetailRow>
+                <DetailRow label="Destination country">
+                  {order.destinationCountry}
+                </DetailRow>
+                <DetailRow label="Shipping date">
+                  {formatDate(order.shippingDate)}
+                </DetailRow>
+                <DetailRow label="Price">{formatPrice(order.price)}</DetailRow>
+                <DetailRow label="Created">
+                  {formatDate(order.createdAt)}
+                </DetailRow>
+                <DetailRow label="Updated">
+                  {formatDate(order.updatedAt)}
+                </DetailRow>
+              </dl>
+              <div className="flex justify-end gap-2 pt-2">
+                <Button variant="primary" size="md" onClick={onStartEdit}>
+                  Edit
+                </Button>
+                <Button
+                  size="md"
+                  onClick={onClose}
+                  className="border border-slate-300 bg-transparent text-slate-700 hover:bg-slate-100"
+                >
+                  Close
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       )}
     </Modal>

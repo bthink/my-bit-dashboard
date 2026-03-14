@@ -18,6 +18,8 @@ type OrderFormProps = {
   isSubmitting: boolean;
 };
 
+const todayIso = () => new Date().toISOString().slice(0, 10);
+
 const defaultValues: CreateOrderInput = {
   destinationCountry: "",
   shippingDate: "",
@@ -35,7 +37,7 @@ export const OrderForm = ({
     () => initialValues?.destinationCountry ?? defaultValues.destinationCountry,
   );
   const [shippingDate, setShippingDate] = useState(
-    () => initialValues?.shippingDate ?? defaultValues.shippingDate,
+    () => initialValues?.shippingDate ?? todayIso(),
   );
   const [price, setPrice] = useState<string>(() =>
     initialValues?.price !== undefined && initialValues.price !== 0
@@ -71,7 +73,7 @@ export const OrderForm = ({
         value={destinationCountry}
         onChange={setDestinationCountry}
         options={countryOptions}
-        placeholder={{ value: "", label: "Select country" }}
+        placeholder={{value: "", label: "Select country"}}
         wrapperClassName="space-y-1"
         labelClassName="mb-1 block text-sm font-medium text-slate-600"
         className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 transition-colors focus:outline-none focus:ring-1 focus:border-emerald-500 focus:ring-emerald-500"

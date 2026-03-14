@@ -12,7 +12,11 @@ import type {Order} from "../domain/orders/order";
 import type {CreateOrderInput} from "../domain/orders/order";
 import type {OrderFieldErrors} from "../domain/orders/errors";
 
-type FormMode = "create" | {edit: Order};
+type OrderModalState = {
+  orderId: string;
+  mode: "view" | "edit";
+  editSource: "table" | "details";
+};
 
 type SortKey = "destinationCountry" | "shippingDate" | "price" | "createdAt";
 type SortDir = "asc" | "desc";
@@ -55,10 +59,11 @@ const OrderOverview = () => {
     deleteOrder,
   } = useOrdersStore();
 
-  const [formOpen, setFormOpen] = useState<FormMode | null>(null);
+  const [createFormOpen, setCreateFormOpen] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<OrderFieldErrors | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [viewOrder, setViewOrder] = useState<Order | null>(null);
+  const [orderModalState, setOrderModalState] =
+    useState<OrderModalState | null>(null);
   const [sort, setSort] = useState<{key: SortKey; dir: SortDir}>({
     key: "shippingDate",
     dir: "asc",
@@ -101,45 +106,65 @@ const OrderOverview = () => {
   const openCreate = useCallback(() => {
     clearError();
     setFieldErrors(null);
-    setFormOpen("create");
+    setCreateFormOpen(true);
   }, [clearError]);
+
+  const openView = useCallback(
+    (order: Order) => {
+      clearError();
+      setFieldErrors(null);
+      setOrderModalState({
+        orderId: order.id,
+        mode: "view",
+        editSource: "details",
+      });
+    },
+    [clearError],
+  );
 
   const openEdit = useCallback(
     (order: Order) => {
       clearError();
       setFieldErrors(null);
-      setViewOrder(null);
-      setFormOpen({edit: order});
+      setOrderModalState({
+        orderId: order.id,
+        mode: "edit",
+        editSource: "table",
+      });
     },
     [clearError],
   );
 
-  const openView = useCallback(
-    (order: Order) => {
-      clearError();
-      setViewOrder(order);
-    },
-    [clearError],
-  );
-
-  const closeView = useCallback(() => {
-    setViewOrder(null);
-  }, []);
-
-  const closeForm = useCallback(() => {
-    setFormOpen(null);
+  const closeOrderModal = useCallback(() => {
+    setOrderModalState(null);
     setFieldErrors(null);
   }, []);
 
-  const handleFormSubmit = useCallback(
+  const switchOrderModalToEdit = useCallback(() => {
+    setOrderModalState((prev) =>
+      prev ? {...prev, mode: "edit", editSource: "details"} : prev,
+    );
+  }, []);
+
+  const switchOrderModalToView = useCallback(() => {
+    setFieldErrors(null);
+    setOrderModalState((prev) => {
+      if (!prev) return prev;
+      if (prev.editSource === "table") return null;
+      return {...prev, mode: "view"};
+    });
+  }, []);
+
+  const closeForm = useCallback(() => {
+    setCreateFormOpen(false);
+    setFieldErrors(null);
+  }, []);
+
+  const handleCreateSubmit = useCallback(
     async (values: CreateOrderInput) => {
       setFieldErrors(null);
       try {
-        if (formOpen === "create") {
-          await createOrder(values);
-        } else if (formOpen && "edit" in formOpen) {
-          await updateOrder(formOpen.edit.id, values);
-        }
+        await createOrder(values);
         closeForm();
       } catch (e) {
         if (isOrderValidationError(e)) {
@@ -151,7 +176,35 @@ const OrderOverview = () => {
         throw e;
       }
     },
-    [formOpen, createOrder, updateOrder, closeForm, clearError],
+    [createOrder, closeForm, clearError],
+  );
+
+  const selectedOrder = useMemo(
+    () =>
+      orderModalState
+        ? (orders.find((order) => order.id === orderModalState.orderId) ?? null)
+        : null,
+    [orderModalState, orders],
+  );
+
+  const handleEditSubmit = useCallback(
+    async (values: CreateOrderInput) => {
+      if (!selectedOrder) return;
+      setFieldErrors(null);
+      try {
+        await updateOrder(selectedOrder.id, values);
+        closeOrderModal();
+      } catch (e) {
+        if (isOrderValidationError(e)) {
+          setFieldErrors(e.fieldErrors);
+          clearError();
+          throw e;
+        }
+        setFieldErrors(null);
+        throw e;
+      }
+    },
+    [selectedOrder, updateOrder, closeOrderModal, clearError],
   );
 
   const handleDeleteClick = useCallback((id: string) => {
@@ -176,26 +229,9 @@ const OrderOverview = () => {
 
   const orderToDelete = useMemo(
     () =>
-      deletingId ? orders.find((o) => o.id === deletingId) ?? null : null,
+      deletingId ? (orders.find((o) => o.id === deletingId) ?? null) : null,
     [deletingId, orders],
   );
-
-  const isFormOpen = formOpen !== null;
-  const modalTitle = formOpen === "create" ? "Create order" : "Edit order";
-  const formKey =
-    formOpen === "create"
-      ? "create"
-      : formOpen !== null
-        ? formOpen.edit.id
-        : "create";
-  const initialValues: CreateOrderInput | undefined =
-    formOpen !== null && formOpen !== "create"
-      ? {
-          destinationCountry: formOpen.edit.destinationCountry,
-          shippingDate: formOpen.edit.shippingDate,
-          price: formOpen.edit.price,
-        }
-      : undefined;
 
   return (
     <div className="flex h-full flex-col gap-4">
@@ -407,21 +443,25 @@ const OrderOverview = () => {
       )}
 
       <OrderFormModal
-        isOpen={isFormOpen}
+        isOpen={createFormOpen}
         onClose={closeForm}
-        title={modalTitle}
-        formKey={formKey}
-        initialValues={initialValues}
-        onSubmit={handleFormSubmit}
+        title="Create order"
+        formKey="create"
+        onSubmit={handleCreateSubmit}
         fieldErrors={fieldErrors}
         isSubmitting={isSaving}
       />
 
       <OrderDetailsModal
-        order={viewOrder}
-        isOpen={viewOrder !== null}
-        onClose={closeView}
-        onEdit={openEdit}
+        order={selectedOrder}
+        isOpen={orderModalState !== null}
+        mode={orderModalState?.mode ?? "view"}
+        onClose={closeOrderModal}
+        onStartEdit={switchOrderModalToEdit}
+        onCancelEdit={switchOrderModalToView}
+        onSubmit={handleEditSubmit}
+        fieldErrors={fieldErrors}
+        isSubmitting={isSaving}
       />
 
       <ConfirmDeleteModal

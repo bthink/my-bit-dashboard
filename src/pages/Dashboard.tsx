@@ -105,7 +105,7 @@ const Dashboard = () => {
             value={selectedCountry}
             onChange={setSelectedCountry}
             options={uniqueCountries}
-            placeholder={{ value: "all", label: "All countries" }}
+            placeholder={{value: "all", label: "All countries"}}
           />
 
           <div className="grid gap-4 sm:grid-cols-3">

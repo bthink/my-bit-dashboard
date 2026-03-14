@@ -1,0 +1,32 @@
+import type {ReactNode} from "react";
+
+type SortDir = "asc" | "desc";
+
+export type SortableColumnHeaderProps<T extends string> = {
+  sortKey: T;
+  sort: {key: T; dir: SortDir} | null | undefined;
+  onSort: (key: T) => void;
+  children: ReactNode;
+};
+
+export function SortableColumnHeader<T extends string>({
+  sortKey,
+  sort,
+  onSort,
+  children,
+}: SortableColumnHeaderProps<T>) {
+  const isActive = sort?.key === sortKey;
+  return (
+    <button
+      type="button"
+      onClick={() => onSort(sortKey)}
+      className="flex items-center gap-1 rounded p-0 text-left hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
+      aria-sort={
+        isActive ? (sort.dir === "asc" ? "ascending" : "descending") : undefined
+      }
+    >
+      {children}
+      {isActive && <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>}
+    </button>
+  );
+}

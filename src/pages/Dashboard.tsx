@@ -1,4 +1,4 @@
-import {useLayoutEffect, useMemo, useRef, useState} from "react";
+import {useMemo, useState} from "react";
 import {
   BarChart,
   Bar,
@@ -9,47 +9,14 @@ import {
   Cell,
 } from "recharts";
 import {Button} from "../presentation/components/Button";
+import {ChartContainer} from "../presentation/components/ChartContainer";
+import {StatCard} from "../presentation/components/StatCard";
 import {useOrdersStore} from "../presentation/hooks/useOrdersStore";
 import {
   calculateOrderMetrics,
   getOrderCountByCountry,
   getOrderCountByDate,
 } from "../domain/orders/metrics";
-
-const ChartContainer = ({
-  children,
-}: {
-  children: (size: {width: number; height: number}) => React.ReactNode;
-}) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [size, setSize] = useState({width: 0, height: 0});
-
-  useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new ResizeObserver((entries) => {
-      const {width, height} = entries[0]?.contentRect ?? {};
-      if (
-        typeof width === "number" &&
-        typeof height === "number" &&
-        width > 0 &&
-        height > 0
-      ) {
-        setSize({width, height});
-      }
-    });
-    observer.observe(el);
-    const {width, height} = el.getBoundingClientRect();
-    if (width > 0 && height > 0) setSize({width, height});
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div ref={ref} className="h-64 min-h-64 min-w-0 w-full">
-      {size.width > 0 && size.height > 0 ? children(size) : null}
-    </div>
-  );
-};
 
 const CHART_COLORS = [
   "rgb(16 185 129)",
@@ -154,30 +121,15 @@ const Dashboard = () => {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 transition-colors">
-              <div className="text-sm font-medium text-slate-600">
-                Total orders
-              </div>
-              <div className="mt-1 text-2xl font-semibold text-slate-900">
-                {metrics.totalOrders}
-              </div>
-            </div>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 transition-colors">
-              <div className="text-sm font-medium text-slate-600">
-                Total price
-              </div>
-              <div className="mt-1 text-2xl font-semibold text-slate-900">
-                {metrics.totalPrice.toLocaleString()}
-              </div>
-            </div>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 transition-colors">
-              <div className="text-sm font-medium text-slate-600">
-                Unique countries
-              </div>
-              <div className="mt-1 text-2xl font-semibold text-slate-900">
-                {metrics.uniqueCountries}
-              </div>
-            </div>
+            <StatCard label="Total orders" value={metrics.totalOrders} />
+            <StatCard
+              label="Total price"
+              value={metrics.totalPrice.toLocaleString()}
+            />
+            <StatCard
+              label="Unique countries"
+              value={metrics.uniqueCountries}
+            />
           </div>
 
           {filteredOrders.length === 0 ? (

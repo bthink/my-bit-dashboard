@@ -3,9 +3,9 @@ import {Eye, Pencil, Trash2, Check, X} from "lucide-react";
 import {useVirtualizer} from "@tanstack/react-virtual";
 import {useOrdersStore} from "../presentation/hooks/useOrdersStore";
 import {Button} from "../presentation/components/Button";
-import {Modal} from "../presentation/components/Modal";
 import {OrderDetailsModal} from "../presentation/components/OrderDetailsModal";
-import {OrderForm} from "../presentation/components/OrderForm";
+import {OrderFormModal} from "../presentation/components/OrderFormModal";
+import {SortableColumnHeader} from "../presentation/components/SortableColumnHeader";
 import {isOrderValidationError} from "../domain/orders/errors";
 import type {Order} from "../domain/orders/order";
 import type {CreateOrderInput} from "../domain/orders/order";
@@ -17,6 +17,8 @@ type SortKey = "destinationCountry" | "shippingDate" | "price" | "createdAt";
 type SortDir = "asc" | "desc";
 const tableGridColumns =
   "grid-cols-[minmax(140px,1fr)_minmax(100px,1fr)_minmax(80px,1fr)_minmax(110px,1fr)_132px]";
+const tableHeaderCellClass =
+  "flex items-center gap-1 px-4 py-3 font-medium text-slate-600";
 
 const formatPrice = (value: number): string => {
   return value.toLocaleString(undefined, {
@@ -56,21 +58,27 @@ const OrderOverview = () => {
   const [fieldErrors, setFieldErrors] = useState<OrderFieldErrors | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [viewOrder, setViewOrder] = useState<Order | null>(null);
-  const [sort, setSort] = useState<{key: SortKey; dir: SortDir} | null>(null);
+  const [sort, setSort] = useState<{key: SortKey; dir: SortDir}>({
+    key: "shippingDate",
+    dir: "asc",
+  });
   const scrollParentRef = useRef<HTMLDivElement>(null);
 
   const sortedOrders = useMemo(() => {
-    if (!sort) return orders;
     const {key: sortKey, dir: sortDir} = sort;
-    return [...orders].sort((a, b) => {
-      const aVal = a[sortKey];
-      const bVal = b[sortKey];
-      const cmp =
-        typeof aVal === "number" && typeof bVal === "number"
-          ? aVal - bVal
-          : String(aVal).localeCompare(String(bVal));
-      return sortDir === "asc" ? cmp : -cmp;
-    });
+    return [...orders]
+      .map((order, index) => ({order, index}))
+      .sort((a, b) => {
+        const aVal = a.order[sortKey];
+        const bVal = b.order[sortKey];
+        const cmp =
+          typeof aVal === "number" && typeof bVal === "number"
+            ? aVal - bVal
+            : String(aVal).localeCompare(String(bVal));
+        if (cmp !== 0) return sortDir === "asc" ? cmp : -cmp;
+        return a.index - b.index;
+      })
+      .map(({order}) => order);
   }, [orders, sort]);
 
   const handleSort = useCallback((key: SortKey) => {
@@ -256,101 +264,49 @@ const OrderOverview = () => {
               role="row"
               style={{minWidth: 560}}
             >
-                <div
-                  className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
-                  role="columnheader"
+              <div className={tableHeaderCellClass} role="columnheader">
+                <SortableColumnHeader
+                  sortKey="destinationCountry"
+                  sort={sort}
+                  onSort={handleSort}
                 >
-                  <button
-                    type="button"
-                    onClick={() => handleSort("destinationCountry")}
-                    className="flex items-center gap-1 rounded p-0 text-left hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
-                    aria-sort={
-                      sort?.key === "destinationCountry"
-                        ? sort.dir === "asc"
-                          ? "ascending"
-                          : "descending"
-                        : undefined
-                    }
-                  >
-                    Destination
-                    {sort?.key === "destinationCountry" && (
-                      <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
-                    )}
-                  </button>
-                </div>
-                <div
-                  className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
-                  role="columnheader"
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleSort("shippingDate")}
-                    className="flex items-center gap-1 rounded p-0 text-left hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
-                    aria-sort={
-                      sort?.key === "shippingDate"
-                        ? sort.dir === "asc"
-                          ? "ascending"
-                          : "descending"
-                        : undefined
-                    }
-                  >
-                    Shipping date
-                    {sort?.key === "shippingDate" && (
-                      <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
-                    )}
-                  </button>
-                </div>
-                <div
-                  className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
-                  role="columnheader"
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleSort("price")}
-                    className="flex items-center gap-1 rounded p-0 text-left hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
-                    aria-sort={
-                      sort?.key === "price"
-                        ? sort.dir === "asc"
-                          ? "ascending"
-                          : "descending"
-                        : undefined
-                    }
-                  >
-                    Price
-                    {sort?.key === "price" && (
-                      <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
-                    )}
-                  </button>
-                </div>
-                <div
-                  className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
-                  role="columnheader"
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleSort("createdAt")}
-                    className="flex items-center gap-1 rounded p-0 text-left hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
-                    aria-sort={
-                      sort?.key === "createdAt"
-                        ? sort.dir === "asc"
-                          ? "ascending"
-                          : "descending"
-                        : undefined
-                    }
-                  >
-                    Created at
-                    {sort?.key === "createdAt" && (
-                      <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
-                    )}
-                  </button>
-                </div>
-                <div
-                  className="flex items-center px-4 py-3 font-medium text-slate-600"
-                  role="columnheader"
-                >
-                  Actions
-                </div>
+                  Destination
+                </SortableColumnHeader>
               </div>
+              <div className={tableHeaderCellClass} role="columnheader">
+                <SortableColumnHeader
+                  sortKey="shippingDate"
+                  sort={sort}
+                  onSort={handleSort}
+                >
+                  Shipping date
+                </SortableColumnHeader>
+              </div>
+              <div className={tableHeaderCellClass} role="columnheader">
+                <SortableColumnHeader
+                  sortKey="price"
+                  sort={sort}
+                  onSort={handleSort}
+                >
+                  Price
+                </SortableColumnHeader>
+              </div>
+              <div className={tableHeaderCellClass} role="columnheader">
+                <SortableColumnHeader
+                  sortKey="createdAt"
+                  sort={sort}
+                  onSort={handleSort}
+                >
+                  Created at
+                </SortableColumnHeader>
+              </div>
+              <div
+                className="flex items-center px-4 py-3 font-medium text-slate-600"
+                role="columnheader"
+              >
+                Actions
+              </div>
+            </div>
             <div ref={scrollParentRef} className="min-h-0 flex-1 overflow-auto">
               <div
                 style={{
@@ -468,16 +424,16 @@ const OrderOverview = () => {
         </div>
       )}
 
-      <Modal isOpen={isFormOpen} onClose={closeForm} title={modalTitle}>
-        <OrderForm
-          key={formKey}
-          initialValues={initialValues}
-          onSubmit={handleFormSubmit}
-          onCancel={closeForm}
-          fieldErrors={fieldErrors}
-          isSubmitting={isSaving}
-        />
-      </Modal>
+      <OrderFormModal
+        isOpen={isFormOpen}
+        onClose={closeForm}
+        title={modalTitle}
+        formKey={formKey}
+        initialValues={initialValues}
+        onSubmit={handleFormSubmit}
+        fieldErrors={fieldErrors}
+        isSubmitting={isSaving}
+      />
 
       <OrderDetailsModal
         order={viewOrder}

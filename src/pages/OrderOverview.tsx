@@ -1,4 +1,5 @@
-import {useState, useCallback} from "react";
+import {useState, useCallback, useRef} from "react";
+import {useVirtualizer} from "@tanstack/react-virtual";
 import {useOrdersStore} from "../presentation/hooks/useOrdersStore";
 import {Button} from "../presentation/components/Button";
 import {Modal} from "../presentation/components/Modal";
@@ -35,6 +36,14 @@ const OrderOverview = () => {
   const [fieldErrors, setFieldErrors] = useState<OrderFieldErrors | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [viewOrder, setViewOrder] = useState<Order | null>(null);
+  const scrollParentRef = useRef<HTMLDivElement>(null);
+
+  const rowVirtualizer = useVirtualizer({
+    count: orders.length,
+    getScrollElement: () => scrollParentRef.current,
+    estimateSize: () => 52,
+    overscan: 10,
+  });
 
   const openCreate = useCallback(() => {
     clearError();
@@ -196,86 +205,138 @@ const OrderOverview = () => {
               Saving…
             </p>
           )}
-          <div className="overflow-x-auto rounded-lg border border-slate-200">
-            <table className="w-full min-w-[480px] border-collapse text-left text-sm">
-              <thead>
-                <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="px-4 py-3 font-medium text-slate-600">
-                    Destination country
-                  </th>
-                  <th className="px-4 py-3 font-medium text-slate-600">
-                    Shipping date
-                  </th>
-                  <th className="px-4 py-3 font-medium text-slate-600">
-                    Price
-                  </th>
-                  <th className="px-4 py-3 font-medium text-slate-600">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order) => (
-                  <tr
-                    key={order.id}
-                    className="border-b border-slate-200 last:border-b-0 transition-colors hover:bg-slate-50"
-                  >
-                    <td className="px-4 py-3 text-slate-800">
-                      {order.destinationCountry}
-                    </td>
-                    <td className="px-4 py-3 text-slate-800">
-                      {order.shippingDate}
-                    </td>
-                    <td className="px-4 py-3 text-slate-800">
-                      {formatPrice(order.price)}
-                    </td>
-                    <td className="px-4 py-3">
-                      {deletingId === order.id ? (
-                        <span className="flex items-center gap-2 text-xs">
-                          <span className="text-slate-500">Delete?</span>
-                          <Button
-                            variant="danger"
-                            onClick={() => handleDeleteConfirm(order.id)}
-                            disabled={isSaving}
-                          >
-                            Yes
-                          </Button>
-                          <Button
-                            onClick={handleDeleteCancel}
-                            disabled={isSaving}
-                          >
-                            No
-                          </Button>
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-2">
-                          <Button
-                            onClick={() => openView(order)}
-                            disabled={isSaving}
-                          >
-                            View
-                          </Button>
-                          <Button
-                            variant="primaryOutline"
-                            onClick={() => openEdit(order)}
-                            disabled={isSaving}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            variant="danger"
-                            onClick={() => handleDeleteClick(order.id)}
-                            disabled={isSaving}
-                          >
-                            Delete
-                          </Button>
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div
+            className="overflow-hidden rounded-lg border border-slate-200"
+            role="table"
+            aria-label="Orders"
+          >
+            <div
+              className="grid grid-cols-[minmax(140px,1fr)_minmax(100px,1fr)_minmax(80px,1fr)_auto] border-b border-slate-200 bg-slate-50 text-left text-sm"
+              role="row"
+            >
+              <div
+                className="px-4 py-3 font-medium text-slate-600"
+                role="columnheader"
+              >
+                Destination country
+              </div>
+              <div
+                className="px-4 py-3 font-medium text-slate-600"
+                role="columnheader"
+              >
+                Shipping date
+              </div>
+              <div
+                className="px-4 py-3 font-medium text-slate-600"
+                role="columnheader"
+              >
+                Price
+              </div>
+              <div
+                className="px-4 py-3 font-medium text-slate-600"
+                role="columnheader"
+              >
+                Actions
+              </div>
+            </div>
+            <div
+              ref={scrollParentRef}
+              className="overflow-auto max-h-[60vh] min-h-[120px]"
+            >
+              <div
+                style={{
+                  height: `${rowVirtualizer.getTotalSize()}px`,
+                  position: "relative",
+                  width: "100%",
+                  minWidth: 480,
+                }}
+              >
+                {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                  const order = orders[virtualRow.index];
+                  return (
+                    <div
+                      key={order.id}
+                      data-index={virtualRow.index}
+                      ref={rowVirtualizer.measureElement}
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        transform: `translateY(${virtualRow.start}px)`,
+                      }}
+                      className="grid grid-cols-[minmax(140px,1fr)_minmax(100px,1fr)_minmax(80px,1fr)_auto] border-b border-slate-200 text-left text-sm transition-colors hover:bg-slate-50"
+                      role="row"
+                    >
+                      <div
+                        className="px-4 py-3 text-slate-800"
+                        role="cell"
+                      >
+                        {order.destinationCountry}
+                      </div>
+                      <div
+                        className="px-4 py-3 text-slate-800"
+                        role="cell"
+                      >
+                        {order.shippingDate}
+                      </div>
+                      <div
+                        className="px-4 py-3 text-slate-800"
+                        role="cell"
+                      >
+                        {formatPrice(order.price)}
+                      </div>
+                      <div
+                        className="px-4 py-3"
+                        role="cell"
+                      >
+                        {deletingId === order.id ? (
+                          <span className="flex items-center gap-2 text-xs">
+                            <span className="text-slate-500">Delete?</span>
+                            <Button
+                              variant="danger"
+                              onClick={() => handleDeleteConfirm(order.id)}
+                              disabled={isSaving}
+                            >
+                              Yes
+                            </Button>
+                            <Button
+                              onClick={handleDeleteCancel}
+                              disabled={isSaving}
+                            >
+                              No
+                            </Button>
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-2">
+                            <Button
+                              onClick={() => openView(order)}
+                              disabled={isSaving}
+                            >
+                              View
+                            </Button>
+                            <Button
+                              variant="primaryOutline"
+                              onClick={() => openEdit(order)}
+                              disabled={isSaving}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="danger"
+                              onClick={() => handleDeleteClick(order.id)}
+                              disabled={isSaving}
+                            >
+                              Delete
+                            </Button>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
       )}

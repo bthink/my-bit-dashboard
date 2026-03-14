@@ -9,5 +9,14 @@ export type Order = {
   updatedAt: string;
 };
 
+export type CreateOrderInput = {
+  destinationCountry: string;
+  shippingDate: string;
+  price: number;
+};
 
-
+export type UpdateOrderInput = {
+  destinationCountry: string;
+  shippingDate: string;
+  price: number;
+};

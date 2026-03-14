@@ -70,7 +70,11 @@ export const Select = ({
         ))}
       </select>
       {hasError && error != null && (
-        <p id={errorId} className="mt-1 text-sm text-[var(--color-danger)]" role="alert">
+        <p
+          id={errorId}
+          className="mt-1 text-sm text-[var(--color-danger)]"
+          role="alert"
+        >
           {error}
         </p>
       )}

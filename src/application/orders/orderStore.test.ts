@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from "vitest";
-import { OrderStore } from "./orderStore";
-import type { Order } from "../../domain/orders/order";
-import type { OrderRepository } from "./orderRepository";
+import {describe, it, expect, vi} from "vitest";
+import {OrderStore} from "./orderStore";
+import type {Order} from "../../domain/orders/order";
+import type {OrderRepository} from "./orderRepository";
 
 vi.mock("./delay", () => ({
   withDelay: <T>(fn: () => Promise<T>): Promise<T> => fn(),
@@ -9,7 +9,7 @@ vi.mock("./delay", () => ({
 
 const createMockRepository = (
   initial: Order[] = [],
-): OrderRepository & { getSaved: () => Order[] } => {
+): OrderRepository & {getSaved: () => Order[]} => {
   let stored = [...initial];
 
   return {
@@ -79,7 +79,11 @@ describe("OrderStore", () => {
       };
       const store = new OrderStore(repo);
 
-      await Promise.all([store.initialize(), store.initialize(), store.initialize()]);
+      await Promise.all([
+        store.initialize(),
+        store.initialize(),
+        store.initialize(),
+      ]);
 
       expect(loadCount).toBe(1);
       await store.initialize();

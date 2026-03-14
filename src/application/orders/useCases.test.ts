@@ -1,6 +1,10 @@
-import { describe, it, expect } from "vitest";
-import { createOrder, getOrder, updateOrder, deleteOrder } from "./useCases";
-import type { Order, CreateOrderInput, UpdateOrderInput } from "../../domain/orders/order";
+import {describe, it, expect} from "vitest";
+import {createOrder, getOrder, updateOrder, deleteOrder} from "./useCases";
+import type {
+  Order,
+  CreateOrderInput,
+  UpdateOrderInput,
+} from "../../domain/orders/order";
 
 const baseOrder: Order = {
   id: "order-1",
@@ -89,9 +93,7 @@ describe("updateOrder", () => {
       shippingDate: "2024-03-15",
       price: 100,
     };
-    expect(() =>
-      updateOrder([baseOrder], "order-1", invalidInput),
-    ).toThrow();
+    expect(() => updateOrder([baseOrder], "order-1", invalidInput)).toThrow();
   });
 });
 

@@ -32,7 +32,9 @@ type DetailRowProps = {
 const DetailRow = ({label, children, mono}: DetailRowProps) => (
   <div>
     <dt className="font-medium text-[var(--color-text-soft)]">{label}</dt>
-    <dd className={`ml-2 mt-0.5 text-[var(--color-text)]${mono ? " font-mono" : ""}`}>
+    <dd
+      className={`ml-2 mt-0.5 text-[var(--color-text)]${mono ? " font-mono" : ""}`}
+    >
       {children}
     </dd>
   </div>

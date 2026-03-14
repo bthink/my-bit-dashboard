@@ -51,7 +51,11 @@ export const NumberInput = ({
         aria-describedby={hasError ? errorId : undefined}
       />
       {hasError && (
-        <p id={errorId} className="mt-1 text-sm text-[var(--color-danger)]" role="alert">
+        <p
+          id={errorId}
+          className="mt-1 text-sm text-[var(--color-danger)]"
+          role="alert"
+        >
           {error}
         </p>
       )}

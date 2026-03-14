@@ -17,7 +17,9 @@ const App = () => {
             />
             <div className="text-sm font-semibold tracking-tight text-[var(--color-text)]">
               Bartosz Fink{" "}
-              <span className="font-normal text-[var(--color-text-soft)]">x</span>{" "}
+              <span className="font-normal text-[var(--color-text-soft)]">
+                x
+              </span>{" "}
               Dawn Technology
             </div>
           </div>

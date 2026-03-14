@@ -147,21 +147,30 @@ const Dashboard = () => {
                         />
                         <XAxis
                           dataKey="country"
-                          tick={{fill: "var(--color-chart-label)", fontSize: 12}}
+                          tick={{
+                            fill: "var(--color-chart-label)",
+                            fontSize: 12,
+                          }}
                           stroke="var(--color-chart-axis)"
                         />
                         <YAxis
-                          tick={{fill: "var(--color-chart-label)", fontSize: 12}}
+                          tick={{
+                            fill: "var(--color-chart-label)",
+                            fontSize: 12,
+                          }}
                           stroke="var(--color-chart-axis)"
                         />
                         <Tooltip
                           contentStyle={{
                             backgroundColor: "var(--color-chart-tooltip-bg)",
-                            border: "1px solid var(--color-chart-tooltip-border)",
+                            border:
+                              "1px solid var(--color-chart-tooltip-border)",
                             borderRadius: "8px",
                             color: "var(--color-chart-tooltip-text)",
                           }}
-                          labelStyle={{color: "var(--color-chart-tooltip-text)"}}
+                          labelStyle={{
+                            color: "var(--color-chart-tooltip-text)",
+                          }}
                         />
                         <Bar
                           dataKey="count"
@@ -200,21 +209,30 @@ const Dashboard = () => {
                         />
                         <XAxis
                           dataKey="date"
-                          tick={{fill: "var(--color-chart-label)", fontSize: 12}}
+                          tick={{
+                            fill: "var(--color-chart-label)",
+                            fontSize: 12,
+                          }}
                           stroke="var(--color-chart-axis)"
                         />
                         <YAxis
-                          tick={{fill: "var(--color-chart-label)", fontSize: 12}}
+                          tick={{
+                            fill: "var(--color-chart-label)",
+                            fontSize: 12,
+                          }}
                           stroke="var(--color-chart-axis)"
                         />
                         <Tooltip
                           contentStyle={{
                             backgroundColor: "var(--color-chart-tooltip-bg)",
-                            border: "1px solid var(--color-chart-tooltip-border)",
+                            border:
+                              "1px solid var(--color-chart-tooltip-border)",
                             borderRadius: "8px",
                             color: "var(--color-chart-tooltip-text)",
                           }}
-                          labelStyle={{color: "var(--color-chart-tooltip-text)"}}
+                          labelStyle={{
+                            color: "var(--color-chart-tooltip-text)",
+                          }}
                         />
                         <Bar
                           dataKey="count"

@@ -102,7 +102,10 @@ export const Modal = ({isOpen, onClose, title, children}: ModalProps) => {
         className={`relative w-full max-w-md rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl ${contentClass}`}
       >
         <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
-          <h2 id="modal-title" className="text-lg font-semibold text-[var(--color-text)]">
+          <h2
+            id="modal-title"
+            className="text-lg font-semibold text-[var(--color-text)]"
+          >
             {displayTitle}
           </h2>
           <Button

@@ -1,11 +1,11 @@
-import { describe, it, expect } from "vitest";
+import {describe, it, expect} from "vitest";
 import {
   normalizeOrderInput,
   validateOrderInput,
   normalizeDateInput,
   isValidIsoDate,
 } from "./validation";
-import type { CreateOrderInput, UpdateOrderInput } from "./order";
+import type {CreateOrderInput, UpdateOrderInput} from "./order";
 
 describe("normalizeOrderInput", () => {
   it("trims destination country and normalizes date", () => {
@@ -40,11 +40,11 @@ describe("validateOrderInput", () => {
 
   it("throws when destination country is empty", () => {
     expect(() =>
-      validateOrderInput({ ...validInput, destinationCountry: "" }),
+      validateOrderInput({...validInput, destinationCountry: ""}),
     ).toThrow();
     let thrown: unknown;
     try {
-      validateOrderInput({ ...validInput, destinationCountry: "" });
+      validateOrderInput({...validInput, destinationCountry: ""});
     } catch (e) {
       thrown = e;
     }
@@ -56,34 +56,36 @@ describe("validateOrderInput", () => {
       },
     });
     expect(() =>
-      validateOrderInput({ ...validInput, destinationCountry: "   " }),
+      validateOrderInput({...validInput, destinationCountry: "   "}),
     ).toThrow();
   });
 
   it("throws when destination country exceeds max length", () => {
     const long = "a".repeat(201);
     expect(() =>
-      validateOrderInput({ ...validInput, destinationCountry: long }),
+      validateOrderInput({...validInput, destinationCountry: long}),
     ).toThrow();
     try {
-      validateOrderInput({ ...validInput, destinationCountry: long });
+      validateOrderInput({...validInput, destinationCountry: long});
     } catch (e: unknown) {
-      expect((e as { fieldErrors?: Record<string, string> }).fieldErrors?.destinationCountry).toMatch(
-        /200/,
-      );
+      expect(
+        (e as {fieldErrors?: Record<string, string>}).fieldErrors
+          ?.destinationCountry,
+      ).toMatch(/200/);
     }
   });
 
   it("throws when destination country is not allowed", () => {
     expect(() =>
-      validateOrderInput({ ...validInput, destinationCountry: "Atlantis" }),
+      validateOrderInput({...validInput, destinationCountry: "Atlantis"}),
     ).toThrow();
     try {
-      validateOrderInput({ ...validInput, destinationCountry: "Atlantis" });
+      validateOrderInput({...validInput, destinationCountry: "Atlantis"});
     } catch (e: unknown) {
-      expect((e as { fieldErrors?: Record<string, string> }).fieldErrors?.destinationCountry).toMatch(
-        /allowed/,
-      );
+      expect(
+        (e as {fieldErrors?: Record<string, string>}).fieldErrors
+          ?.destinationCountry,
+      ).toMatch(/allowed/);
     }
   });
 
@@ -102,20 +104,16 @@ describe("validateOrderInput", () => {
 
   it("throws when shipping date is invalid", () => {
     expect(() =>
-      validateOrderInput({ ...validInput, shippingDate: "not-a-date" }),
+      validateOrderInput({...validInput, shippingDate: "not-a-date"}),
     ).toThrow();
     expect(() =>
-      validateOrderInput({ ...validInput, shippingDate: "2024-13-45" }),
+      validateOrderInput({...validInput, shippingDate: "2024-13-45"}),
     ).toThrow();
   });
 
   it("throws when price is not a positive number", () => {
-    expect(() =>
-      validateOrderInput({ ...validInput, price: 0 }),
-    ).toThrow();
-    expect(() =>
-      validateOrderInput({ ...validInput, price: -10 }),
-    ).toThrow();
+    expect(() => validateOrderInput({...validInput, price: 0})).toThrow();
+    expect(() => validateOrderInput({...validInput, price: -10})).toThrow();
     expect(() =>
       validateOrderInput({
         ...validInput,

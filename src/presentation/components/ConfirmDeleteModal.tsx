@@ -22,7 +22,9 @@ export const ConfirmDeleteModal = ({
       <div className="space-y-4">
         <p className="text-sm text-[var(--color-text-muted)]">
           Are you sure you want to delete the order to{" "}
-          <strong className="text-[var(--color-text)]">{order.destinationCountry}</strong>
+          <strong className="text-[var(--color-text)]">
+            {order.destinationCountry}
+          </strong>
           ? This cannot be undone.
         </p>
         <div className="flex justify-end gap-2 pt-2">

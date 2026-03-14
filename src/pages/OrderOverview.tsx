@@ -283,7 +283,9 @@ const OrderOverview = () => {
 
       {isInitialized && orders.length === 0 && (
         <div className="content-fade-in rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-soft)] p-8 text-center">
-          <p className="text-sm text-[var(--color-text-muted)]">No orders yet.</p>
+          <p className="text-sm text-[var(--color-text-muted)]">
+            No orders yet.
+          </p>
           <p className="mt-1 text-sm text-[var(--color-text-soft)]">
             Create your first order using the button above.
           </p>
@@ -293,7 +295,10 @@ const OrderOverview = () => {
       {isInitialized && orders.length > 0 && (
         <div className="content-fade-in flex min-h-0 flex-1 flex-col gap-4">
           {isSaving && (
-            <p className="text-sm text-[var(--color-text-muted)]" aria-live="polite">
+            <p
+              className="text-sm text-[var(--color-text-muted)]"
+              aria-live="polite"
+            >
               Saving…
             </p>
           )}

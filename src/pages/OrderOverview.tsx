@@ -1,10 +1,11 @@
 import {useState, useCallback, useRef, useMemo} from "react";
-import {Eye, Pencil, Trash2, Check, X} from "lucide-react";
+import {Eye, Pencil, Trash2} from "lucide-react";
 import {useVirtualizer} from "@tanstack/react-virtual";
 import {useOrdersStore} from "../presentation/hooks/useOrdersStore";
 import {Button} from "../presentation/components/Button";
 import {OrderDetailsModal} from "../presentation/components/OrderDetailsModal";
 import {OrderFormModal} from "../presentation/components/OrderFormModal";
+import {ConfirmDeleteModal} from "../presentation/components/ConfirmDeleteModal";
 import {SortableColumnHeader} from "../presentation/components/SortableColumnHeader";
 import {isOrderValidationError} from "../domain/orders/errors";
 import type {Order} from "../domain/orders/order";
@@ -172,6 +173,12 @@ const OrderOverview = () => {
   const handleDeleteCancel = useCallback(() => {
     setDeletingId(null);
   }, []);
+
+  const orderToDelete = useMemo(
+    () =>
+      deletingId ? orders.find((o) => o.id === deletingId) ?? null : null,
+    [deletingId, orders],
+  );
 
   const isFormOpen = formOpen !== null;
   const modalTitle = formOpen === "create" ? "Create order" : "Edit order";
@@ -358,62 +365,37 @@ const OrderOverview = () => {
                         {formatDate(order.createdAt)}
                       </div>
                       <div className="flex items-center px-4 py-3" role="cell">
-                        {deletingId === order.id ? (
-                          <span className="flex items-center gap-2 text-xs">
-                            <span className="text-slate-500">Delete?</span>
-                            <Button
-                              variant="danger"
-                              size="icon"
-                              onClick={() => handleDeleteConfirm(order.id)}
-                              disabled={isSaving}
-                              title="Confirm delete"
-                              aria-label="Confirm delete"
-                            >
-                              <Check size={16} aria-hidden />
-                            </Button>
-                            <Button
-                              size="icon"
-                              onClick={handleDeleteCancel}
-                              disabled={isSaving}
-                              title="Cancel"
-                              aria-label="Cancel"
-                            >
-                              <X size={16} aria-hidden />
-                            </Button>
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1">
-                            <Button
-                              size="icon"
-                              onClick={() => openView(order)}
-                              disabled={isSaving}
-                              title="View"
-                              aria-label={`View order ${order.id}`}
-                            >
-                              <Eye size={18} aria-hidden />
-                            </Button>
-                            <Button
-                              variant="primaryOutline"
-                              size="icon"
-                              onClick={() => openEdit(order)}
-                              disabled={isSaving}
-                              title="Edit"
-                              aria-label={`Edit order ${order.id}`}
-                            >
-                              <Pencil size={18} aria-hidden />
-                            </Button>
-                            <Button
-                              variant="danger"
-                              size="icon"
-                              onClick={() => handleDeleteClick(order.id)}
-                              disabled={isSaving}
-                              title="Delete"
-                              aria-label={`Delete order ${order.id}`}
-                            >
-                              <Trash2 size={18} aria-hidden />
-                            </Button>
-                          </span>
-                        )}
+                        <span className="flex items-center gap-1">
+                          <Button
+                            size="icon"
+                            onClick={() => openView(order)}
+                            disabled={isSaving}
+                            title="View"
+                            aria-label={`View order ${order.id}`}
+                          >
+                            <Eye size={18} aria-hidden />
+                          </Button>
+                          <Button
+                            variant="primaryOutline"
+                            size="icon"
+                            onClick={() => openEdit(order)}
+                            disabled={isSaving}
+                            title="Edit"
+                            aria-label={`Edit order ${order.id}`}
+                          >
+                            <Pencil size={18} aria-hidden />
+                          </Button>
+                          <Button
+                            variant="danger"
+                            size="icon"
+                            onClick={() => handleDeleteClick(order.id)}
+                            disabled={isSaving}
+                            title="Delete"
+                            aria-label={`Delete order ${order.id}`}
+                          >
+                            <Trash2 size={18} aria-hidden />
+                          </Button>
+                        </span>
                       </div>
                     </div>
                   );
@@ -440,6 +422,16 @@ const OrderOverview = () => {
         isOpen={viewOrder !== null}
         onClose={closeView}
         onEdit={openEdit}
+      />
+
+      <ConfirmDeleteModal
+        order={orderToDelete}
+        isOpen={deletingId !== null}
+        onClose={handleDeleteCancel}
+        onConfirm={() =>
+          deletingId !== null ? handleDeleteConfirm(deletingId) : undefined
+        }
+        isDeleting={isSaving}
       />
     </div>
   );

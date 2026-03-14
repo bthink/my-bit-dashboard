@@ -6,6 +6,8 @@ import {
   isAllowedDestinationCountry,
 } from "../../domain/orders/countries";
 import {Button} from "./Button";
+import {DateInput} from "./DateInput";
+import {NumberInput} from "./NumberInput";
 import {Select} from "./Select";
 
 type OrderFormProps = {
@@ -76,72 +78,24 @@ export const OrderForm = ({
         error={fieldErrors?.destinationCountry ?? null}
       />
 
-      <div>
-        <label
-          htmlFor="order-form-date"
-          className="mb-1 block text-sm font-medium text-slate-600"
-        >
-          Shipping date
-        </label>
-        <input
-          id="order-form-date"
-          type="date"
-          value={shippingDate}
-          onChange={(e) => setShippingDate(e.target.value)}
-          className={`w-full rounded-lg border bg-white px-3 py-2 text-slate-900 transition-colors focus:outline-none focus:ring-1 ${
-            fieldErrors?.shippingDate
-              ? "border-rose-500 focus:border-rose-500 focus:ring-rose-500"
-              : "border-slate-300 focus:border-emerald-500 focus:ring-emerald-500"
-          }`}
-          aria-invalid={Boolean(fieldErrors?.shippingDate)}
-          aria-describedby={
-            fieldErrors?.shippingDate ? "date-error" : undefined
-          }
-        />
-        {fieldErrors?.shippingDate && (
-          <p
-            id="date-error"
-            className="mt-1 text-sm text-rose-600"
-            role="alert"
-          >
-            {fieldErrors.shippingDate}
-          </p>
-        )}
-      </div>
+      <DateInput
+        id="order-form-date"
+        label="Shipping date"
+        value={shippingDate}
+        onChange={setShippingDate}
+        error={fieldErrors?.shippingDate ?? null}
+      />
 
-      <div>
-        <label
-          htmlFor="order-form-price"
-          className="mb-1 block text-sm font-medium text-slate-600"
-        >
-          Price
-        </label>
-        <input
-          id="order-form-price"
-          type="number"
-          min="0"
-          step="any"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          className={`w-full rounded-lg border bg-white px-3 py-2 text-slate-900 placeholder-slate-400 transition-colors focus:outline-none focus:ring-1 ${
-            fieldErrors?.price
-              ? "border-rose-500 focus:border-rose-500 focus:ring-rose-500"
-              : "border-slate-300 focus:border-emerald-500 focus:ring-emerald-500"
-          }`}
-          placeholder="0.00"
-          aria-invalid={Boolean(fieldErrors?.price)}
-          aria-describedby={fieldErrors?.price ? "price-error" : undefined}
-        />
-        {fieldErrors?.price && (
-          <p
-            id="price-error"
-            className="mt-1 text-sm text-rose-600"
-            role="alert"
-          >
-            {fieldErrors.price}
-          </p>
-        )}
-      </div>
+      <NumberInput
+        id="order-form-price"
+        label="Price"
+        value={price}
+        onChange={setPrice}
+        error={fieldErrors?.price ?? null}
+        min={0}
+        step="any"
+        placeholder="0.00"
+      />
 
       <div className="flex justify-end gap-2 border-t border-slate-200 pt-4">
         <Button

@@ -6,7 +6,7 @@ import {generateFakeOrders} from "../application/orders/fakeOrders";
 const FAKE_ORDER_COUNT = 100;
 
 const DevPanelPage = () => {
-  const {replaceOrders, isSaving, error, clearError} = useOrdersStore();
+  const {orders, replaceOrders, isSaving, error, clearError} = useOrdersStore();
   const [clearConfirm, setClearConfirm] = useState(false);
 
   if (import.meta.env.PROD) {
@@ -20,7 +20,8 @@ const DevPanelPage = () => {
 
   const handleGenerate = async () => {
     try {
-      await replaceOrders(generateFakeOrders(FAKE_ORDER_COUNT));
+      const newOrders = generateFakeOrders(FAKE_ORDER_COUNT);
+      await replaceOrders([...orders, ...newOrders]);
     } catch {
       // Error surfaced via store
     }

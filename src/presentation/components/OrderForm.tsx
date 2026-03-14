@@ -6,6 +6,7 @@ import {
   isAllowedDestinationCountry,
 } from "../../domain/orders/countries";
 import {Button} from "./Button";
+import {Select} from "./Select";
 
 type OrderFormProps = {
   initialValues?: CreateOrderInput;
@@ -62,44 +63,18 @@ export const OrderForm = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label
-          htmlFor="order-form-country"
-          className="mb-1 block text-sm font-medium text-slate-600"
-        >
-          Destination country
-        </label>
-        <select
-          id="order-form-country"
-          value={destinationCountry}
-          onChange={(e) => setDestinationCountry(e.target.value)}
-          className={`w-full rounded-lg border bg-white px-3 py-2 text-slate-900 transition-colors focus:outline-none focus:ring-1 ${
-            fieldErrors?.destinationCountry
-              ? "border-rose-500 focus:border-rose-500 focus:ring-rose-500"
-              : "border-slate-300 focus:border-emerald-500 focus:ring-emerald-500"
-          }`}
-          aria-invalid={Boolean(fieldErrors?.destinationCountry)}
-          aria-describedby={
-            fieldErrors?.destinationCountry ? "country-error" : undefined
-          }
-        >
-          <option value="">Select country</option>
-          {countryOptions.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-        {fieldErrors?.destinationCountry && (
-          <p
-            id="country-error"
-            className="mt-1 text-sm text-rose-600"
-            role="alert"
-          >
-            {fieldErrors.destinationCountry}
-          </p>
-        )}
-      </div>
+      <Select
+        id="order-form-country"
+        label="Destination country"
+        value={destinationCountry}
+        onChange={setDestinationCountry}
+        options={countryOptions}
+        placeholder={{ value: "", label: "Select country" }}
+        wrapperClassName="space-y-1"
+        labelClassName="mb-1 block text-sm font-medium text-slate-600"
+        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 transition-colors focus:outline-none focus:ring-1 focus:border-emerald-500 focus:ring-emerald-500"
+        error={fieldErrors?.destinationCountry ?? null}
+      />
 
       <div>
         <label

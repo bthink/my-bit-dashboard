@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import {Button} from "../presentation/components/Button";
 import {ChartContainer} from "../presentation/components/ChartContainer";
+import {Select} from "../presentation/components/Select";
 import {StatCard} from "../presentation/components/StatCard";
 import {useOrdersStore} from "../presentation/hooks/useOrdersStore";
 import {
@@ -98,27 +99,14 @@ const Dashboard = () => {
 
       {isInitialized && (
         <div className="content-fade-in space-y-6">
-          <div className="flex flex-wrap items-center gap-4">
-            <label
-              htmlFor="dashboard-country-filter"
-              className="text-sm text-slate-600"
-            >
-              Filter by country
-            </label>
-            <select
-              id="dashboard-country-filter"
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 transition-colors focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            >
-              <option value="all">All countries</option>
-              {uniqueCountries.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Select
+            id="dashboard-country-filter"
+            label="Filter by country"
+            value={selectedCountry}
+            onChange={setSelectedCountry}
+            options={uniqueCountries}
+            placeholder={{ value: "all", label: "All countries" }}
+          />
 
           <div className="grid gap-4 sm:grid-cols-3">
             <StatCard label="Total orders" value={metrics.totalOrders} />

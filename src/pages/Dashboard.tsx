@@ -64,9 +64,6 @@ const Dashboard = () => {
         <h1 className="text-xl font-semibold tracking-tight text-[var(--color-text)]">
           Orders dashboard
         </h1>
-        <p className="text-sm text-[var(--color-text-muted)]">
-          High-level metrics and trends for the Acme Logistics order pipeline.
-        </p>
       </header>
 
       {error && (

@@ -1,4 +1,5 @@
-import {useState, useCallback, useRef} from "react";
+import {useState, useCallback, useRef, useMemo} from "react";
+import {Eye, Pencil, Trash2, Check, X} from "lucide-react";
 import {useVirtualizer} from "@tanstack/react-virtual";
 import {useOrdersStore} from "../presentation/hooks/useOrdersStore";
 import {Button} from "../presentation/components/Button";
@@ -12,11 +13,28 @@ import type {OrderFieldErrors} from "../domain/orders/errors";
 
 type FormMode = "create" | {edit: Order};
 
+type SortKey = "destinationCountry" | "shippingDate" | "price" | "createdAt";
+type SortDir = "asc" | "desc";
+
 const formatPrice = (value: number): string => {
   return value.toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
+};
+
+const formatDate = (iso: string): string => {
+  try {
+    return new Date(iso).toLocaleString(undefined, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return iso;
+  }
 };
 
 const OrderOverview = () => {
@@ -36,10 +54,34 @@ const OrderOverview = () => {
   const [fieldErrors, setFieldErrors] = useState<OrderFieldErrors | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [viewOrder, setViewOrder] = useState<Order | null>(null);
+  const [sort, setSort] = useState<{ key: SortKey; dir: SortDir } | null>(null);
   const scrollParentRef = useRef<HTMLDivElement>(null);
 
+  const sortedOrders = useMemo(() => {
+    if (!sort) return orders;
+    const { key: sortKey, dir: sortDir } = sort;
+    return [...orders].sort((a, b) => {
+      const aVal = a[sortKey];
+      const bVal = b[sortKey];
+      const cmp =
+        typeof aVal === "number" && typeof bVal === "number"
+          ? aVal - bVal
+          : String(aVal).localeCompare(String(bVal));
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+  }, [orders, sort]);
+
+  const handleSort = useCallback((key: SortKey) => {
+    setSort((prev) => {
+      if (prev?.key === key) {
+        return { key, dir: prev.dir === "asc" ? "desc" : "asc" };
+      }
+      return { key, dir: "asc" };
+    });
+  }, []);
+
   const rowVirtualizer = useVirtualizer({
-    count: orders.length,
+    count: sortedOrders.length,
     getScrollElement: () => scrollParentRef.current,
     estimateSize: () => 52,
     overscan: 10,
@@ -211,26 +253,96 @@ const OrderOverview = () => {
             aria-label="Orders"
           >
             <div
-              className="grid grid-cols-[minmax(140px,1fr)_minmax(100px,1fr)_minmax(80px,1fr)_auto] border-b border-slate-200 bg-slate-50 text-left text-sm"
+              className="grid grid-cols-[minmax(140px,1fr)_minmax(100px,1fr)_minmax(80px,1fr)_minmax(110px,1fr)_auto] border-b border-slate-200 bg-slate-50 text-left text-sm"
               role="row"
             >
               <div
-                className="px-4 py-3 font-medium text-slate-600"
+                className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
                 role="columnheader"
               >
-                Destination country
+                <button
+                  type="button"
+                  onClick={() => handleSort("destinationCountry")}
+                  className="flex items-center gap-1 rounded hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
+                  aria-sort={
+                    sort?.key === "destinationCountry"
+                      ? sort.dir === "asc"
+                        ? "ascending"
+                        : "descending"
+                      : undefined
+                  }
+                >
+                  Destination country
+                  {sort?.key === "destinationCountry" && (
+                    <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
+                  )}
+                </button>
               </div>
               <div
-                className="px-4 py-3 font-medium text-slate-600"
+                className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
                 role="columnheader"
               >
-                Shipping date
+                <button
+                  type="button"
+                  onClick={() => handleSort("shippingDate")}
+                  className="flex items-center gap-1 rounded hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
+                  aria-sort={
+                    sort?.key === "shippingDate"
+                      ? sort.dir === "asc"
+                        ? "ascending"
+                        : "descending"
+                      : undefined
+                  }
+                >
+                  Shipping date
+                  {sort?.key === "shippingDate" && (
+                    <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
+                  )}
+                </button>
               </div>
               <div
-                className="px-4 py-3 font-medium text-slate-600"
+                className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
                 role="columnheader"
               >
-                Price
+                <button
+                  type="button"
+                  onClick={() => handleSort("price")}
+                  className="flex items-center gap-1 rounded hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
+                  aria-sort={
+                    sort?.key === "price"
+                      ? sort.dir === "asc"
+                        ? "ascending"
+                        : "descending"
+                      : undefined
+                  }
+                >
+                  Price
+                  {sort?.key === "price" && (
+                    <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
+                  )}
+                </button>
+              </div>
+              <div
+                className="flex items-center gap-1 px-4 py-3 font-medium text-slate-600"
+                role="columnheader"
+              >
+                <button
+                  type="button"
+                  onClick={() => handleSort("createdAt")}
+                  className="flex items-center gap-1 rounded hover:bg-slate-200/80 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
+                  aria-sort={
+                    sort?.key === "createdAt"
+                      ? sort.dir === "asc"
+                        ? "ascending"
+                        : "descending"
+                      : undefined
+                  }
+                >
+                  Created at
+                  {sort?.key === "createdAt" && (
+                    <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>
+                  )}
+                </button>
               </div>
               <div
                 className="px-4 py-3 font-medium text-slate-600"
@@ -248,11 +360,11 @@ const OrderOverview = () => {
                   height: `${rowVirtualizer.getTotalSize()}px`,
                   position: "relative",
                   width: "100%",
-                  minWidth: 480,
+                  minWidth: 560,
                 }}
               >
                 {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                  const order = orders[virtualRow.index];
+                  const order = sortedOrders[virtualRow.index];
                   return (
                     <div
                       key={order.id}
@@ -265,7 +377,7 @@ const OrderOverview = () => {
                         width: "100%",
                         transform: `translateY(${virtualRow.start}px)`,
                       }}
-                      className="grid grid-cols-[minmax(140px,1fr)_minmax(100px,1fr)_minmax(80px,1fr)_auto] border-b border-slate-200 text-left text-sm transition-colors hover:bg-slate-50"
+                      className="grid grid-cols-[minmax(140px,1fr)_minmax(100px,1fr)_minmax(80px,1fr)_minmax(110px,1fr)_auto] border-b border-slate-200 text-left text-sm transition-colors hover:bg-slate-50"
                       role="row"
                     >
                       <div
@@ -287,6 +399,12 @@ const OrderOverview = () => {
                         {formatPrice(order.price)}
                       </div>
                       <div
+                        className="px-4 py-3 text-slate-800"
+                        role="cell"
+                      >
+                        {formatDate(order.createdAt)}
+                      </div>
+                      <div
                         className="px-4 py-3"
                         role="cell"
                       >
@@ -295,39 +413,54 @@ const OrderOverview = () => {
                             <span className="text-slate-500">Delete?</span>
                             <Button
                               variant="danger"
+                              size="icon"
                               onClick={() => handleDeleteConfirm(order.id)}
                               disabled={isSaving}
+                              title="Confirm delete"
+                              aria-label="Confirm delete"
                             >
-                              Yes
+                              <Check size={16} aria-hidden />
                             </Button>
                             <Button
+                              size="icon"
                               onClick={handleDeleteCancel}
                               disabled={isSaving}
+                              title="Cancel"
+                              aria-label="Cancel"
                             >
-                              No
+                              <X size={16} aria-hidden />
                             </Button>
                           </span>
                         ) : (
-                          <span className="flex items-center gap-2">
+                          <span className="flex items-center gap-1">
                             <Button
+                              size="icon"
                               onClick={() => openView(order)}
                               disabled={isSaving}
+                              title="View"
+                              aria-label={`View order ${order.id}`}
                             >
-                              View
+                              <Eye size={18} aria-hidden />
                             </Button>
                             <Button
                               variant="primaryOutline"
+                              size="icon"
                               onClick={() => openEdit(order)}
                               disabled={isSaving}
+                              title="Edit"
+                              aria-label={`Edit order ${order.id}`}
                             >
-                              Edit
+                              <Pencil size={18} aria-hidden />
                             </Button>
                             <Button
                               variant="danger"
+                              size="icon"
                               onClick={() => handleDeleteClick(order.id)}
                               disabled={isSaving}
+                              title="Delete"
+                              aria-label={`Delete order ${order.id}`}
                             >
-                              Delete
+                              <Trash2 size={18} aria-hidden />
                             </Button>
                           </span>
                         )}

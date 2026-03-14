@@ -1,6 +1,8 @@
 import {useState, useCallback} from "react";
 import {useOrdersStore} from "../presentation/hooks/useOrdersStore";
+import {Button} from "../presentation/components/Button";
 import {Modal} from "../presentation/components/Modal";
+import {OrderDetailsModal} from "../presentation/components/OrderDetailsModal";
 import {OrderForm} from "../presentation/components/OrderForm";
 import {isOrderValidationError} from "../domain/orders/errors";
 import type {Order} from "../domain/orders/order";
@@ -139,14 +141,14 @@ const OrderOverview = () => {
           </p>
         </div>
         {isInitialized && (
-          <button
-            type="button"
+          <Button
+            variant="primary"
+            size="md"
             onClick={openCreate}
             disabled={isSaving}
-            className="shrink-0 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-50"
           >
             Create order
-          </button>
+          </Button>
         )}
       </header>
 
@@ -156,13 +158,9 @@ const OrderOverview = () => {
           role="alert"
         >
           <span>{error}</span>
-          <button
-            type="button"
-            onClick={clearError}
-            className="shrink-0 rounded px-2 py-1 text-xs font-medium text-rose-700 transition-colors hover:bg-rose-200 hover:text-rose-900 active:scale-[0.98]"
-          >
+          <Button variant="danger" onClick={clearError} className="text-rose-700 hover:bg-rose-200 hover:text-rose-900">
             Dismiss
-          </button>
+          </Button>
         </div>
       )}
 
@@ -231,49 +229,42 @@ const OrderOverview = () => {
                       {deletingId === order.id ? (
                         <span className="flex items-center gap-2 text-xs">
                           <span className="text-slate-500">Delete?</span>
-                          <button
-                            type="button"
+                          <Button
+                            variant="danger"
                             onClick={() => handleDeleteConfirm(order.id)}
                             disabled={isSaving}
-                            className="rounded px-2 py-1 text-rose-600 transition-colors hover:bg-rose-100 hover:text-rose-800 active:scale-[0.98] disabled:opacity-50"
                           >
                             Yes
-                          </button>
-                          <button
-                            type="button"
+                          </Button>
+                          <Button
                             onClick={handleDeleteCancel}
                             disabled={isSaving}
-                            className="rounded px-2 py-1 text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-800 active:scale-[0.98] disabled:opacity-50"
                           >
                             No
-                          </button>
+                          </Button>
                         </span>
                       ) : (
                         <span className="flex items-center gap-2">
-                          <button
-                            type="button"
+                          <Button
                             onClick={() => openView(order)}
                             disabled={isSaving}
-                            className="rounded px-2 py-1 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-800 active:scale-[0.98] disabled:opacity-50"
                           >
                             View
-                          </button>
-                          <button
-                            type="button"
+                          </Button>
+                          <Button
+                            variant="primaryOutline"
                             onClick={() => openEdit(order)}
                             disabled={isSaving}
-                            className="rounded px-2 py-1 text-emerald-600 transition-colors hover:bg-emerald-100 hover:text-emerald-800 active:scale-[0.98] disabled:opacity-50"
                           >
                             Edit
-                          </button>
-                          <button
-                            type="button"
+                          </Button>
+                          <Button
+                            variant="danger"
                             onClick={() => handleDeleteClick(order.id)}
                             disabled={isSaving}
-                            className="rounded px-2 py-1 text-rose-600 transition-colors hover:bg-rose-100 hover:text-rose-800 active:scale-[0.98] disabled:opacity-50"
                           >
                             Delete
-                          </button>
+                          </Button>
                         </span>
                       )}
                     </td>
@@ -296,71 +287,12 @@ const OrderOverview = () => {
         />
       </Modal>
 
-      <Modal
+      <OrderDetailsModal
+        order={viewOrder}
         isOpen={viewOrder !== null}
         onClose={closeView}
-        title="Order details"
-      >
-        {viewOrder && (
-          <div className="space-y-4">
-            <dl className="grid gap-3 text-sm">
-              <div>
-                <dt className="font-medium text-slate-400">ID</dt>
-                <dd className="mt-0.5 font-mono text-slate-200">
-                  {viewOrder.id}
-                </dd>
-              </div>
-              <div>
-                <dt className="font-medium text-slate-400">
-                  Destination country
-                </dt>
-                <dd className="mt-0.5 text-slate-200">
-                  {viewOrder.destinationCountry}
-                </dd>
-              </div>
-              <div>
-                <dt className="font-medium text-slate-400">Shipping date</dt>
-                <dd className="mt-0.5 text-slate-200">
-                  {viewOrder.shippingDate}
-                </dd>
-              </div>
-              <div>
-                <dt className="font-medium text-slate-400">Price</dt>
-                <dd className="mt-0.5 text-slate-200">
-                  {formatPrice(viewOrder.price)}
-                </dd>
-              </div>
-              <div>
-                <dt className="font-medium text-slate-400">Created</dt>
-                <dd className="mt-0.5 text-slate-200">{viewOrder.createdAt}</dd>
-              </div>
-              <div>
-                <dt className="font-medium text-slate-400">Updated</dt>
-                <dd className="mt-0.5 text-slate-200">{viewOrder.updatedAt}</dd>
-              </div>
-            </dl>
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  closeView();
-                  openEdit(viewOrder);
-                }}
-                className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-emerald-500 active:scale-[0.98]"
-              >
-                Edit
-              </button>
-              <button
-                type="button"
-                onClick={closeView}
-                className="rounded-lg border border-slate-600 bg-transparent px-3 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 active:scale-[0.98]"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
-      </Modal>
+        onEdit={openEdit}
+      />
     </div>
   );
 };

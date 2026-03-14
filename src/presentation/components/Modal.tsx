@@ -12,15 +12,27 @@ type ModalProps = {
 
 export const Modal = ({isOpen, onClose, title, children}: ModalProps) => {
   const [isClosing, setIsClosing] = useState(false);
-  const prevOpenRef = useRef(isOpen);
-  const visible = isOpen || isClosing;
+  const wasOpenRef = useRef(isOpen);
+  const lastContentRef = useRef<{ title: string; children: React.ReactNode }>({
+    title: "",
+    children: null,
+  });
+
+  if (isOpen) {
+    lastContentRef.current = { title, children };
+    wasOpenRef.current = true;
+  }
+
+  const inLeavePhase = !isOpen && (isClosing || wasOpenRef.current);
+  const visible = isOpen || inLeavePhase;
+  const displayTitle = inLeavePhase ? lastContentRef.current.title : title;
+  const displayChildren = inLeavePhase ? lastContentRef.current.children : children;
 
   useEffect(() => {
     if (isOpen) {
       setIsClosing(false);
-      prevOpenRef.current = true;
-    } else if (prevOpenRef.current) {
-      prevOpenRef.current = false;
+    } else if (wasOpenRef.current) {
+      wasOpenRef.current = false;
       setIsClosing(true);
       const t = setTimeout(() => setIsClosing(false), CLOSE_DURATION_MS);
       return () => clearTimeout(t);
@@ -30,16 +42,15 @@ export const Modal = ({isOpen, onClose, title, children}: ModalProps) => {
   useEffect(() => {
     if (!visible) return;
     const handle = (e: KeyboardEvent) =>
-      e.key === "Escape" && !isClosing && onClose();
+      e.key === "Escape" && !inLeavePhase && onClose();
     document.addEventListener("keydown", handle);
     return () => document.removeEventListener("keydown", handle);
-  }, [visible, isClosing, onClose]);
+  }, [visible, inLeavePhase, onClose]);
 
   if (!visible) return null;
 
-  const leave = isClosing;
-  const overlayClass = leave ? "modal-overlay-leave" : "modal-overlay-enter";
-  const contentClass = leave ? "modal-content-leave" : "modal-content-enter";
+  const overlayClass = inLeavePhase ? "modal-overlay-leave" : "modal-overlay-enter";
+  const contentClass = inLeavePhase ? "modal-content-leave" : "modal-content-enter";
 
   return (
     <div
@@ -50,7 +61,7 @@ export const Modal = ({isOpen, onClose, title, children}: ModalProps) => {
     >
       <div
         className={`absolute inset-0 bg-slate-900/30 backdrop-blur-sm ${overlayClass}`}
-        onClick={() => !isClosing && onClose()}
+        onClick={() => !inLeavePhase && onClose()}
         aria-hidden="true"
       />
       <div
@@ -58,19 +69,19 @@ export const Modal = ({isOpen, onClose, title, children}: ModalProps) => {
       >
         <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
           <h2 id="modal-title" className="text-lg font-semibold text-slate-900">
-            {title}
+            {displayTitle}
           </h2>
           <Button
             type="button"
             size="icon"
-            onClick={() => !isClosing && onClose()}
+            onClick={() => !inLeavePhase && onClose()}
             className="text-slate-500 hover:text-slate-800"
             aria-label="Close"
           >
             &times;
           </Button>
         </div>
-        <div className="p-4">{children}</div>
+        <div className="p-4">{displayChildren}</div>
       </div>
     </div>
   );

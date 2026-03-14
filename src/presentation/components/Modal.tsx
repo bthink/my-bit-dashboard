@@ -1,7 +1,18 @@
 import {useEffect, useRef, useState} from "react";
 import {Button} from "./Button";
 
-const CLOSE_DURATION_MS = 200;
+const FALLBACK_CLOSE_MS = 250;
+
+const getCloseDurationMs = (): number => {
+  if (typeof document === "undefined") return FALLBACK_CLOSE_MS;
+  const val = getComputedStyle(document.documentElement)
+    .getPropertyValue("--modal-close-duration")
+    .trim();
+  if (!val) return FALLBACK_CLOSE_MS;
+  if (val.endsWith("ms")) return parseFloat(val) || FALLBACK_CLOSE_MS;
+  if (val.endsWith("s")) return (parseFloat(val) || 0.25) * 1000;
+  return FALLBACK_CLOSE_MS;
+};
 
 type ModalProps = {
   isOpen: boolean;
@@ -13,31 +24,49 @@ type ModalProps = {
 export const Modal = ({isOpen, onClose, title, children}: ModalProps) => {
   const [isClosing, setIsClosing] = useState(false);
   const wasOpenRef = useRef(isOpen);
-  const lastContentRef = useRef<{ title: string; children: React.ReactNode }>({
+  const contentRef = useRef<HTMLDivElement>(null);
+  const lastContentRef = useRef<{title: string; children: React.ReactNode}>({
     title: "",
     children: null,
   });
 
   if (isOpen) {
-    lastContentRef.current = { title, children };
+    lastContentRef.current = {title, children};
     wasOpenRef.current = true;
   }
 
   const inLeavePhase = !isOpen && (isClosing || wasOpenRef.current);
   const visible = isOpen || inLeavePhase;
   const displayTitle = inLeavePhase ? lastContentRef.current.title : title;
-  const displayChildren = inLeavePhase ? lastContentRef.current.children : children;
+  const displayChildren = inLeavePhase
+    ? lastContentRef.current.children
+    : children;
 
   useEffect(() => {
     if (isOpen) {
       setIsClosing(false);
     } else if (wasOpenRef.current) {
-      wasOpenRef.current = false;
       setIsClosing(true);
-      const t = setTimeout(() => setIsClosing(false), CLOSE_DURATION_MS);
-      return () => clearTimeout(t);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isClosing) return;
+    const el = contentRef.current;
+    const done = () => {
+      wasOpenRef.current = false;
+      setIsClosing(false);
+    };
+    if (el) {
+      el.addEventListener("transitionend", done, {once: true});
+    }
+    const durationMs = getCloseDurationMs();
+    const fallback = setTimeout(done, durationMs + 50);
+    return () => {
+      if (el) el.removeEventListener("transitionend", done);
+      clearTimeout(fallback);
+    };
+  }, [isClosing]);
 
   useEffect(() => {
     if (!visible) return;
@@ -49,8 +78,12 @@ export const Modal = ({isOpen, onClose, title, children}: ModalProps) => {
 
   if (!visible) return null;
 
-  const overlayClass = inLeavePhase ? "modal-overlay-leave" : "modal-overlay-enter";
-  const contentClass = inLeavePhase ? "modal-content-leave" : "modal-content-enter";
+  const overlayClass = inLeavePhase
+    ? "modal-overlay-leave"
+    : "modal-overlay-enter";
+  const contentClass = inLeavePhase
+    ? "modal-content-leave"
+    : "modal-content-enter";
 
   return (
     <div
@@ -65,6 +98,7 @@ export const Modal = ({isOpen, onClose, title, children}: ModalProps) => {
         aria-hidden="true"
       />
       <div
+        ref={contentRef}
         className={`relative w-full max-w-md rounded-xl border border-slate-200 bg-white shadow-xl ${contentClass}`}
       >
         <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">

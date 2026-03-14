@@ -1,1 +1,25 @@
 @import "tailwindcss";
+
+:root {
+  --modal-close-duration: 200ms;
+}
+
+.modal-overlay-enter {
+  opacity: 1;
+  transition: opacity var(--modal-close-duration) ease-out;
+}
+.modal-overlay-leave {
+  opacity: 0;
+  transition: opacity var(--modal-close-duration) ease-out;
+}
+
+.modal-content-enter {
+  opacity: 1;
+  transform: scale(1);
+  transition: all var(--modal-close-duration) ease-out;
+}
+.modal-content-leave {
+  opacity: 0;
+  transform: scale(0.98);
+  transition: all var(--modal-close-duration) ease-out;
+}

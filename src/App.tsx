@@ -41,13 +41,19 @@ const App = () => {
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm shadow-[var(--color-primary-soft)] backdrop-blur">
             <div className="themed-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto p-4 md:p-6">
               <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route
+                  path="/"
+                  element={<Navigate to="/dashboard" replace />}
+                />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/orders" element={<OrderOverview />} />
                 {!import.meta.env.PROD && (
                   <Route path="/dev" element={<DevPanel />} />
                 )}
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                <Route
+                  path="*"
+                  element={<Navigate to="/dashboard" replace />}
+                />
               </Routes>
             </div>
           </div>

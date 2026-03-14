@@ -1,14 +1,47 @@
+import {Navigate, Route, Routes} from "react-router-dom";
+import {SidebarNavLink} from "./presentation/components/SidebarNavLink";
+import Dashboard from "./pages/Dashboard";
+import OrderOverview from "./pages/OrderOverview";
+import DevPanel from "./pages/DevPanel";
 
-
-function App() {
-
-
+const App = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 text-slate-800">
-      <h1 className="text-3xl font-semibold mb-4">Acme Logistics</h1>
-      
-    </div>
-  )
-}
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 lg:flex-row">
+        <aside className="w-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/60 backdrop-blur lg:w-64">
+          <div className="mb-6">
+            <div className="text-sm font-semibold tracking-tight text-slate-900">
+              Acme Logistics{" "}
+              <span className="text-slate-500 font-normal">by</span>{" "}
+              Dawn.Technology
+            </div>
+          </div>
 
-export default App
+          <nav className="space-y-1 text-sm">
+            <SidebarNavLink to="/dashboard" label="Dashboard" badge="Summary" />
+            <SidebarNavLink
+              to="/orders"
+              label="Order Overview"
+              badge="Inventory"
+            />
+            <SidebarNavLink to="/dev" label="Dev Panel" badge="Dev only" />
+          </nav>
+        </aside>
+
+        <main className="flex-1">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/60 backdrop-blur md:p-6">
+            <Routes>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/orders" element={<OrderOverview />} />
+              <Route path="/dev" element={<DevPanel />} />
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default App;

@@ -181,7 +181,7 @@ const OrderOverview = () => {
       : undefined;
 
   return (
-    <div className="space-y-4">
+    <div className="flex h-full flex-col gap-4">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
           <h1 className="text-xl font-semibold tracking-tight text-slate-900">
@@ -241,14 +241,14 @@ const OrderOverview = () => {
       )}
 
       {isInitialized && orders.length > 0 && (
-        <div className="content-fade-in space-y-4">
+        <div className="content-fade-in flex min-h-0 flex-1 flex-col gap-4">
           {isSaving && (
             <p className="text-sm text-slate-600" aria-live="polite">
               Saving…
             </p>
           )}
           <div
-            className="overflow-hidden rounded-lg border border-slate-200"
+            className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-slate-200"
             role="table"
             aria-label="Orders"
           >
@@ -353,7 +353,7 @@ const OrderOverview = () => {
             </div>
             <div
               ref={scrollParentRef}
-              className="overflow-auto max-h-[60vh] min-h-[120px]"
+              className="min-h-0 flex-1 overflow-auto"
             >
               <div
                 style={{

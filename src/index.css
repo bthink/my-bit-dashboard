@@ -23,3 +23,15 @@
   transform: scale(0.98);
   transition: all var(--modal-close-duration) ease-out;
 }
+
+.content-fade-in {
+  animation: content-fade-in 0.25s ease-out forwards;
+}
+@keyframes content-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

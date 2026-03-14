@@ -24,7 +24,9 @@ const App = () => {
               label="Order Overview"
               badge="Inventory"
             />
-            <SidebarNavLink to="/dev" label="Dev Panel" badge="Dev only" />
+            {!import.meta.env.PROD && (
+              <SidebarNavLink to="/dev" label="Dev Panel" badge="Dev only" />
+            )}
           </nav>
         </aside>
 
@@ -34,7 +36,9 @@ const App = () => {
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/orders" element={<OrderOverview />} />
-              <Route path="/dev" element={<DevPanel />} />
+              {!import.meta.env.PROD && (
+                <Route path="/dev" element={<DevPanel />} />
+              )}
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </div>

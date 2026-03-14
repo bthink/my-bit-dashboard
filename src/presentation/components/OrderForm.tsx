@@ -5,6 +5,7 @@ import {
   DESTINATION_COUNTRIES,
   isAllowedDestinationCountry,
 } from "../../domain/orders/countries";
+import {Button} from "./Button";
 
 type OrderFormProps = {
   initialValues?: CreateOrderInput;
@@ -168,25 +169,27 @@ export const OrderForm = ({
       </div>
 
       <div className="flex justify-end gap-2 border-t border-slate-200 pt-4">
-        <button
+        <Button
           type="button"
+          size="md"
           onClick={onCancel}
           disabled={isSubmitting}
-          className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 active:scale-[0.98] disabled:opacity-50"
+          className="border border-slate-300 text-slate-700 hover:bg-slate-100"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
+          variant="primary"
+          size="md"
           disabled={isSubmitting}
-          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-50"
         >
           {isSubmitting
             ? "Saving…"
             : initialValues
               ? "Update order"
               : "Create order"}
-        </button>
+        </Button>
       </div>
     </form>
   );

@@ -1,4 +1,5 @@
 import {useEffect, useRef, useState} from "react";
+import {Button} from "./Button";
 
 const CLOSE_DURATION_MS = 200;
 
@@ -59,14 +60,15 @@ export const Modal = ({isOpen, onClose, title, children}: ModalProps) => {
           <h2 id="modal-title" className="text-lg font-semibold text-slate-900">
             {title}
           </h2>
-          <button
+          <Button
             type="button"
+            size="icon"
             onClick={() => !isClosing && onClose()}
-            className="rounded p-1 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 active:scale-95"
+            className="text-slate-500 hover:text-slate-800"
             aria-label="Close"
           >
-            <span className="text-xl leading-none">&times;</span>
-          </button>
+            &times;
+          </Button>
         </div>
         <div className="p-4">{children}</div>
       </div>

@@ -158,7 +158,11 @@ const OrderOverview = () => {
           role="alert"
         >
           <span>{error}</span>
-          <Button variant="danger" onClick={clearError} className="text-rose-700 hover:bg-rose-200 hover:text-rose-900">
+          <Button
+            variant="danger"
+            onClick={clearError}
+            className="text-rose-700 hover:bg-rose-200 hover:text-rose-900"
+          >
             Dismiss
           </Button>
         </div>

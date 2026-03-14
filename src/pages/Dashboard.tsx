@@ -8,6 +8,7 @@ import {
   Tooltip,
   Cell,
 } from "recharts";
+import {Button} from "../presentation/components/Button";
 import {useOrdersStore} from "../presentation/hooks/useOrdersStore";
 import {
   calculateOrderMetrics,
@@ -106,13 +107,13 @@ const Dashboard = () => {
           role="alert"
         >
           <span>{error}</span>
-          <button
-            type="button"
+          <Button
+            variant="danger"
             onClick={clearError}
-            className="shrink-0 rounded px-2 py-1 text-xs font-medium text-rose-700 transition-colors hover:bg-rose-200 hover:text-rose-900 active:scale-[0.98]"
+            className="text-rose-700 hover:bg-rose-200 hover:text-rose-900"
           >
             Dismiss
-          </button>
+          </Button>
         </div>
       )}
 

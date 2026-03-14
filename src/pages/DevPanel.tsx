@@ -1,4 +1,5 @@
 import {useState} from "react";
+import {Button} from "../presentation/components/Button";
 import {useOrdersStore} from "../presentation/hooks/useOrdersStore";
 import {generateFakeOrders} from "../application/orders/fakeOrders";
 
@@ -51,56 +52,58 @@ const DevPanelPage = () => {
       {error && (
         <div className="flex items-center justify-between gap-4 rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-800">
           <span>{error}</span>
-          <button
-            type="button"
+          <Button
+            variant="danger"
             onClick={clearError}
-            className="shrink-0 rounded px-2 py-1 text-rose-700 transition-colors hover:bg-rose-200 hover:text-rose-900"
+            className="text-rose-700 hover:bg-rose-200 hover:text-rose-900"
           >
             Dismiss
-          </button>
+          </Button>
         </div>
       )}
 
       <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
+        <Button
+          variant="primary"
+          size="md"
           onClick={handleGenerate}
           disabled={isSaving}
-          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500 disabled:opacity-50 disabled:pointer-events-none"
         >
           {isSaving ? "Saving…" : `Generate ${FAKE_ORDER_COUNT} orders`}
-        </button>
+        </Button>
 
         {!clearConfirm ? (
-          <button
-            type="button"
+          <Button
+            variant="danger"
+            size="md"
             onClick={handleClearClick}
             disabled={isSaving}
-            className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-2 text-sm font-medium text-rose-800 transition-colors hover:bg-rose-100 disabled:opacity-50 disabled:pointer-events-none"
+            className="border border-rose-300 bg-rose-50 text-rose-800 hover:bg-rose-100"
           >
             Clear DB
-          </button>
+          </Button>
         ) : (
           <span className="flex items-center gap-2">
             <span className="text-sm text-slate-600">
               Remove all orders from store and localStorage?
             </span>
-            <button
-              type="button"
+            <Button
+              variant="dangerSolid"
+              size="md"
               onClick={handleClearClick}
               disabled={isSaving}
-              className="rounded-lg bg-rose-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-rose-500 disabled:opacity-50"
+              className="px-3 py-1.5"
             >
               Yes, clear all
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              size="md"
               onClick={handleClearCancel}
               disabled={isSaving}
-              className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 transition-colors hover:bg-slate-200"
+              className="border border-slate-300 text-slate-700 hover:bg-slate-200"
             >
               Cancel
-            </button>
+            </Button>
           </span>
         )}
       </div>

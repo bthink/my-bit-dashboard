@@ -1,4 +1,5 @@
 import type {ReactNode} from "react";
+import {Button} from "./Button";
 import {Modal} from "./Modal";
 import type {Order} from "../../domain/orders/order";
 
@@ -72,20 +73,16 @@ export const OrderDetailsModal = ({
             <DetailRow label="Updated">{formatDate(order.updatedAt)}</DetailRow>
           </dl>
           <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={handleEdit}
-              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-emerald-500 active:scale-[0.98]"
-            >
+            <Button variant="primary" size="md" onClick={handleEdit}>
               Edit
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              size="md"
               onClick={onClose}
-              className="rounded-lg border border-slate-300 bg-transparent px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 active:scale-[0.98]"
+              className="border border-slate-300 bg-transparent text-slate-700 hover:bg-slate-100"
             >
               Close
-            </button>
+            </Button>
           </div>
         </div>
       )}

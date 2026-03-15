@@ -50,6 +50,8 @@ export const OrdersTable = ({
 }: OrdersTableProps) => {
   const scrollParentRef = useRef<HTMLDivElement>(null);
 
+  // TanStack Virtual returns non-memoizable functions; React Compiler skips this component by design
+  // eslint-disable-next-line react-hooks/incompatible-library -- useVirtualizer API limitation
   const rowVirtualizer = useVirtualizer({
     count: orders.length,
     getScrollElement: () => scrollParentRef.current,

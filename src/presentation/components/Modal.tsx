@@ -23,38 +23,33 @@ type ModalProps = {
 
 export const Modal = ({isOpen, onClose, title, children}: ModalProps) => {
   const [isClosing, setIsClosing] = useState(false);
-  const wasOpenRef = useRef(isOpen);
+  const [wasOpen, setWasOpen] = useState(false);
+  const [lastContent, setLastContent] = useState<{
+    title: string;
+    children: React.ReactNode;
+  }>({ title: "", children: null });
   const contentRef = useRef<HTMLDivElement>(null);
-  const lastContentRef = useRef<{title: string; children: React.ReactNode}>({
-    title: "",
-    children: null,
-  });
 
   if (isOpen) {
-    lastContentRef.current = {title, children};
-    wasOpenRef.current = true;
+    if (lastContent.title !== title || lastContent.children !== children) {
+      setLastContent({ title, children });
+    }
+    if (!wasOpen) setWasOpen(true);
+    if (isClosing) setIsClosing(false);
+  } else if (wasOpen && !isClosing) {
+    setIsClosing(true);
   }
 
-  const inLeavePhase = !isOpen && (isClosing || wasOpenRef.current);
+  const inLeavePhase = !isOpen && (isClosing || wasOpen);
   const visible = isOpen || inLeavePhase;
-  const displayTitle = inLeavePhase ? lastContentRef.current.title : title;
-  const displayChildren = inLeavePhase
-    ? lastContentRef.current.children
-    : children;
-
-  useEffect(() => {
-    if (isOpen) {
-      setIsClosing(false);
-    } else if (wasOpenRef.current) {
-      setIsClosing(true);
-    }
-  }, [isOpen]);
+  const displayTitle = inLeavePhase ? lastContent.title : title;
+  const displayChildren = inLeavePhase ? lastContent.children : children;
 
   useEffect(() => {
     if (!isClosing) return;
     const el = contentRef.current;
     const done = () => {
-      wasOpenRef.current = false;
+      setWasOpen(false);
       setIsClosing(false);
     };
     if (el) {

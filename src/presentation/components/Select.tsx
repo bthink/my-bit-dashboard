@@ -13,6 +13,7 @@ type SelectProps = {
   wrapperClassName?: string;
   labelClassName?: string;
   error?: string | null;
+  required?: boolean;
 };
 
 const defaultSelectClassName =
@@ -35,6 +36,7 @@ export const Select = ({
   wrapperClassName = "flex flex-wrap items-center gap-4",
   labelClassName = "text-sm text-[var(--color-text-muted)]",
   error = null,
+  required = false,
 }: SelectProps) => {
   const generatedId = React.useId();
   const errorId = React.useId();
@@ -50,6 +52,12 @@ export const Select = ({
       {label != null && (
         <label htmlFor={selectId} className={labelClassName}>
           {label}
+          {required && (
+            <>
+              <span aria-hidden="true"> *</span>
+              <span className="sr-only"> (required)</span>
+            </>
+          )}
         </label>
       )}
       <select
@@ -57,6 +65,7 @@ export const Select = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={effectiveClassName}
+        required={required}
         aria-invalid={hasError}
         aria-describedby={hasError ? errorId : undefined}
       >

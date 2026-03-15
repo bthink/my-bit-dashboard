@@ -6,6 +6,7 @@ type DateInputProps = {
   error?: string | null;
   wrapperClassName?: string;
   labelClassName?: string;
+  required?: boolean;
 };
 
 const baseClassName =
@@ -23,6 +24,7 @@ export const DateInput = ({
   error = null,
   wrapperClassName = "",
   labelClassName = "mb-1 block text-sm font-medium text-[var(--color-text-muted)]",
+  required = false,
 }: DateInputProps) => {
   const hasError = Boolean(error);
   const errorId = `${id}-error`;
@@ -31,12 +33,19 @@ export const DateInput = ({
     <div className={wrapperClassName || undefined}>
       <label htmlFor={id} className={labelClassName}>
         {label}
+        {required && (
+          <>
+            <span aria-hidden="true"> *</span>
+            <span className="sr-only"> (required)</span>
+          </>
+        )}
       </label>
       <input
         id={id}
         type="date"
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        required={required}
         className={`${baseClassName} ${hasError ? errorClassName : defaultClassName}`}
         aria-invalid={hasError}
         aria-describedby={hasError ? errorId : undefined}

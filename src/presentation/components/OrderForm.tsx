@@ -70,6 +70,7 @@ export const OrderForm = ({
       <Select
         id="order-form-country"
         label="Destination country"
+        required
         value={destinationCountry}
         onChange={setDestinationCountry}
         options={countryOptions}
@@ -83,6 +84,7 @@ export const OrderForm = ({
       <DateInput
         id="order-form-date"
         label="Shipping date"
+        required
         value={shippingDate}
         onChange={setShippingDate}
         error={fieldErrors?.shippingDate ?? null}
@@ -91,6 +93,7 @@ export const OrderForm = ({
       <NumberInput
         id="order-form-price"
         label="Price"
+        required
         value={price}
         onChange={setPrice}
         error={fieldErrors?.price ?? null}

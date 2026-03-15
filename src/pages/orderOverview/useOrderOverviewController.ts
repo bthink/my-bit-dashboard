@@ -139,10 +139,10 @@ export const useOrderOverviewController = () => {
         if (isOrderValidationError(errorValue)) {
           setFieldErrors(errorValue.fieldErrors);
           clearError();
-          throw errorValue;
+          return;
         }
         setFieldErrors(null);
-        throw errorValue;
+        return;
       }
     },
     [createOrder, closeForm, clearError],
@@ -167,10 +167,10 @@ export const useOrderOverviewController = () => {
         if (isOrderValidationError(errorValue)) {
           setFieldErrors(errorValue.fieldErrors);
           clearError();
-          throw errorValue;
+          return;
         }
         setFieldErrors(null);
-        throw errorValue;
+        return;
       }
     },
     [selectedOrder, updateOrder, closeOrderModal, clearError],

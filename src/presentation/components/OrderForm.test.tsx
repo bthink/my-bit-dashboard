@@ -32,7 +32,9 @@ describe("OrderForm", () => {
       />,
     );
 
-    expect(screen.getByLabelText(/destination country/i)).toHaveValue("Germany");
+    expect(screen.getByLabelText(/destination country/i)).toHaveValue(
+      "Germany",
+    );
     expect(screen.getByLabelText(/shipping date/i)).toHaveValue("2026-03-20");
     expect(screen.getByLabelText(/price/i)).toHaveValue(199.99);
     expect(
@@ -46,9 +48,14 @@ describe("OrderForm", () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn().mockResolvedValue(undefined);
 
-    render(<OrderForm onSubmit={onSubmit} onCancel={vi.fn()} isSubmitting={false} />);
+    render(
+      <OrderForm onSubmit={onSubmit} onCancel={vi.fn()} isSubmitting={false} />,
+    );
 
-    await user.selectOptions(screen.getByLabelText(/destination country/i), "France");
+    await user.selectOptions(
+      screen.getByLabelText(/destination country/i),
+      "France",
+    );
     await user.clear(screen.getByLabelText(/shipping date/i));
     await user.type(screen.getByLabelText(/shipping date/i), "2026-04-10");
     await user.clear(screen.getByLabelText(/price/i));
@@ -76,9 +83,13 @@ describe("OrderForm", () => {
       />,
     );
 
-    expect(screen.getByText("Destination country is required.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Destination country is required."),
+    ).toBeInTheDocument();
     expect(screen.getByText("Shipping date is required.")).toBeInTheDocument();
-    expect(screen.getByText("Price must be greater than 0.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Price must be greater than 0."),
+    ).toBeInTheDocument();
     expect(screen.getByLabelText(/destination country/i)).toHaveAttribute(
       "aria-invalid",
       "true",
@@ -87,7 +98,10 @@ describe("OrderForm", () => {
       "aria-invalid",
       "true",
     );
-    expect(screen.getByLabelText(/price/i)).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByLabelText(/price/i)).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
   });
 
   it("disables actions while submitting", () => {

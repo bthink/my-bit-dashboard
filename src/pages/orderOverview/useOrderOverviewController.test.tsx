@@ -5,9 +5,8 @@ import {createOrderValidationError} from "../../domain/orders/errors";
 import {useOrderOverviewController} from "./useOrderOverviewController";
 
 const createOrderMock = vi.fn<(input: CreateOrderInput) => Promise<void>>();
-const updateOrderMock = vi.fn<
-  (id: string, input: CreateOrderInput) => Promise<void>
->();
+const updateOrderMock =
+  vi.fn<(id: string, input: CreateOrderInput) => Promise<void>>();
 const clearErrorMock = vi.fn();
 
 vi.mock("../../presentation/hooks/useOrdersStore", () => ({

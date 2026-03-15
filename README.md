@@ -1,73 +1,48 @@
-# React + TypeScript + Vite
+# My Bit Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Recruitment project: a frontend application for managing orders and analyzing them in a dashboard.  
+Stack: React + TypeScript + Vite, with local persistence and automated tests.
 
-Currently, two official plugins are available:
+## What the app includes
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- `Dashboard` view with core metrics and charts for orders.
+- `Order Overview` view for full order CRUD (create, edit, view, delete).
+- Orders are managed through a single source of truth shared across views, so CRUD operations are reflected immediately in both the dashboard metrics and the orders table.
+- Domain-level data validation and error handling.
+- `Dev Panel` (development-only) for quick test-data generation.
+- Persistence in `localStorage` via a dedicated repository.
 
-## React Compiler
+## Run locally
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+After Vite starts, the app is available at the URL shown in the terminal (by default `http://localhost:5173`).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Available scripts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- `npm run dev` - starts the development server
+- `npm run build` - runs type-checking and creates a production build
+- `npm run preview` - runs a local preview of the production build
+- `npm run lint` - runs ESLint
+- `npm run test` - runs tests once
+- `npm run test:watch` - runs tests in watch mode
+
+## Why there is an artificial delay
+
+In this project, read and write operations are intentionally delayed by a random `200-1500 ms` (see `src/application/orders/delay.ts`).
+
+This delay simulates real API conditions (network and backend latency), so the UI behavior is closer to a production scenario:
+
+- loading and saving states are clearly visible,
+- async edge cases are easier to surface,
+- it verifies that the UI does not assume an instant response.
+
+This helps test not only happy paths, but also app behavior under realistic response times.
+
+## Project docs
+
+- `docs/TOOLS.md` - tools used and why they were chosen
+- `docs/WORKFLOW.md` - development workflow, setup, and quality approach

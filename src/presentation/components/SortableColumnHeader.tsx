@@ -9,12 +9,12 @@ export type SortableColumnHeaderProps<T extends string> = {
   children: ReactNode;
 };
 
-export function SortableColumnHeader<T extends string>({
+export const SortableColumnHeader = <T extends string>({
   sortKey,
   sort,
   onSort,
   children,
-}: SortableColumnHeaderProps<T>) {
+}: SortableColumnHeaderProps<T>) => {
   const isActive = sort?.key === sortKey;
   return (
     <button
@@ -29,4 +29,4 @@ export function SortableColumnHeader<T extends string>({
       {isActive && <span aria-hidden>{sort.dir === "asc" ? "↑" : "↓"}</span>}
     </button>
   );
-}
+};
